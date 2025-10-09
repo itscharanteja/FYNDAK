@@ -7,6 +7,7 @@ A modern, full-stack auction application built with React TypeScript, Supabase, 
 ## ✨ Features
 
 ### 🎯 Core Functionality
+
 - **Real-time Bidding System** - Live bid updates using Supabase real-time subscriptions
 - **Automatic Auction Ending** - Scheduled functions to end auctions and determine winners
 - **User Authentication** - Secure signup/login with profile management
@@ -14,12 +15,14 @@ A modern, full-stack auction application built with React TypeScript, Supabase, 
 - **Payment Integration** - Swish payment system with QR codes and verification
 
 ### 🎨 User Experience
+
 - **Dark/Light Theme Toggle** - Smooth transitions with system preference detection
 - **Responsive Design** - Mobile-first approach with Tailwind CSS
 - **Image Upload & Compression** - Local file upload with automatic optimization
 - **Real-time Notifications** - Live updates for bid status and auction endings
 
 ### 🔒 Security & Performance
+
 - **Row Level Security (RLS)** - Database-level access controls
 - **Image Compression** - Automatic image optimization before storage
 - **TypeScript** - Full type safety throughout the application
@@ -28,6 +31,7 @@ A modern, full-stack auction application built with React TypeScript, Supabase, 
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **React 18** - Modern React with hooks and functional components
 - **TypeScript** - Full type safety and enhanced developer experience
 - **Tailwind CSS** - Utility-first CSS framework with custom theme
@@ -35,6 +39,7 @@ A modern, full-stack auction application built with React TypeScript, Supabase, 
 - **Lucide React** - Beautiful, customizable icons
 
 ### Backend & Database
+
 - **Supabase** - Backend-as-a-Service with PostgreSQL
 - **PostgreSQL** - Robust relational database with advanced features
 - **Real-time Subscriptions** - Live data updates
@@ -42,6 +47,7 @@ A modern, full-stack auction application built with React TypeScript, Supabase, 
 - **Edge Functions** - Server-side logic
 
 ### Additional Tools
+
 - **QRCode.js** - QR code generation for payments
 - **Canvas API** - Client-side image compression
 - **ESLint** - Code linting and formatting
@@ -74,6 +80,7 @@ npm install
 ### Step 3: Supabase Setup
 
 #### 3.1 Create a Supabase Project
+
 1. Go to [supabase.com](https://supabase.com)
 2. Sign up/Login to your account
 3. Click "New Project"
@@ -84,12 +91,14 @@ npm install
 5. Wait for the project to be created (2-3 minutes)
 
 #### 3.2 Get Your Project Credentials
+
 1. In your Supabase dashboard, go to **Settings** → **API**
 2. Copy the following values:
    - **Project URL** (e.g., `https://your-project-id.supabase.co`)
    - **Anon/Public Key** (starts with `eyJhbGciOi...`)
 
 #### 3.3 Configure Environment Variables
+
 1. Create a `.env.local` file in the root directory:
 
 ```bash
@@ -108,6 +117,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key-here
 ### Step 4: Database Setup
 
 #### 4.1 Run the Initial Migration
+
 1. In your Supabase dashboard, go to **SQL Editor**
 2. Click **New Query**
 3. Copy the entire contents of `supabase/migrations/00000000000000_initial_schema.sql`
@@ -115,6 +125,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key-here
 5. Click **Run** to execute the migration
 
 This will create:
+
 - All necessary tables (profiles, products, bids)
 - Database functions for auction management
 - Row Level Security policies
@@ -122,6 +133,7 @@ This will create:
 - Indexes for optimal performance
 
 #### 4.2 Verify Database Setup
+
 1. Go to **Table Editor** in your Supabase dashboard
 2. You should see the following tables:
    - `profiles` - User profile information
@@ -132,11 +144,13 @@ This will create:
 ### Step 5: Create an Admin User
 
 #### 5.1 Sign Up Through the App
+
 1. Start the development server (see Step 6)
 2. Navigate to the signup page
 3. Create your admin account
 
 #### 5.2 Make User an Admin
+
 1. In Supabase dashboard, go to **Table Editor** → **profiles**
 2. Find your user profile
 3. Edit the row and set `is_admin` to `true`
@@ -155,23 +169,27 @@ The application will be available at: `http://localhost:5173`
 ### For Regular Users
 
 #### 1. **Account Creation**
+
 - Navigate to `/signup`
 - Fill in your details (name, email, password)
 - Verify your email if required
 - Complete your profile information
 
 #### 2. **Browsing Auctions**
+
 - View all active auctions on the products page
 - See current prices, time remaining, and product details
 - Filter and search for specific items
 
 #### 3. **Placing Bids**
+
 - Click on any active auction
 - Enter your bid amount (must be higher than current price)
 - Confirm your bid
 - Track your bids in the dashboard
 
 #### 4. **Payment Process** (for won auctions)
+
 - Go to your dashboard
 - Find auctions you've won
 - Click "Pay Here" to start payment process
@@ -182,6 +200,7 @@ The application will be available at: `http://localhost:5173`
 ### For Administrators
 
 #### 1. **Creating Auctions**
+
 - Access the Admin Panel
 - Click "Add New Product"
 - Fill in product details:
@@ -193,12 +212,14 @@ The application will be available at: `http://localhost:5173`
 - Submit to create the auction
 
 #### 2. **Managing Auctions**
+
 - View all auctions in the admin panel
 - Edit existing auctions
 - End auctions manually if needed
 - Delete inappropriate listings
 
 #### 3. **Managing Bids & Payments**
+
 - View all bidders for each auction
 - See payment status for won bids
 - Verify Swish payments using provided phone numbers
@@ -207,6 +228,7 @@ The application will be available at: `http://localhost:5173`
 ## 🔧 Configuration
 
 ### Theme Configuration
+
 The app supports both light and dark themes with automatic system preference detection.
 
 To customize themes, edit `src/contexts/ThemeContext.tsx`:
@@ -215,19 +237,20 @@ To customize themes, edit `src/contexts/ThemeContext.tsx`:
 // Custom theme colors can be added to tailwind.config.js
 export const themes = {
   light: {
-    background: 'bg-white',
-    text: 'text-gray-900',
+    background: "bg-white",
+    text: "text-gray-900",
     // ... other properties
   },
   dark: {
-    background: 'bg-gray-900',
-    text: 'text-white',
+    background: "bg-gray-900",
+    text: "text-white",
     // ... other properties
-  }
+  },
 };
 ```
 
 ### Payment Configuration
+
 Currently configured for Swish payments. To modify:
 
 1. Update QR code generation in `src/components/Dashboard/Dashboard.tsx`
@@ -239,25 +262,30 @@ Currently configured for Swish payments. To modify:
 ### Tables
 
 #### `profiles`
+
 - Extends Supabase auth.users with additional profile information
 - Fields: full_name, avatar_url, phone, address, is_admin
 
 #### `products`
+
 - Stores auction items
 - Fields: name, description, image_url, starting_price, current_price, end_time, status
 
 #### `bids`
+
 - Stores user bids on products
 - Fields: product_id, bidder_id, amount, status, payment_status, payment_phone
 
 ### Key Functions
 
 #### `end_auctions()`
+
 - Automatically called to end expired auctions
 - Determines winners and updates bid statuses
 - Can be triggered by cron jobs
 
 #### `end_auction_rpc(product_uuid)`
+
 - Manual auction ending for admins
 - Returns winner information
 - Used by the admin interface
@@ -265,6 +293,7 @@ Currently configured for Swish payments. To modify:
 ## 🚀 Deployment
 
 ### Prerequisites for Production
+
 - **Supabase Production Project** (upgrade from free tier if needed)
 - **Domain name** (optional but recommended)
 - **SSL Certificate** (automatic with most hosting providers)
@@ -272,6 +301,7 @@ Currently configured for Swish payments. To modify:
 ### Option 1: Vercel (Recommended)
 
 1. **Connect Repository**
+
    ```bash
    # Push your code to GitHub/GitLab
    git remote add origin <your-repo-url>
@@ -279,6 +309,7 @@ Currently configured for Swish payments. To modify:
    ```
 
 2. **Deploy to Vercel**
+
    - Go to [vercel.com](https://vercel.com)
    - Import your repository
    - Add environment variables:
@@ -293,6 +324,7 @@ Currently configured for Swish payments. To modify:
 ### Option 2: Netlify
 
 1. **Build the Project**
+
    ```bash
    npm run build
    ```
@@ -305,6 +337,7 @@ Currently configured for Swish payments. To modify:
 ### Option 3: Traditional Hosting
 
 1. **Build for Production**
+
    ```bash
    npm run build
    ```
@@ -329,24 +362,28 @@ Currently configured for Swish payments. To modify:
 ### Manual Testing Checklist
 
 #### Authentication
+
 - [ ] User can sign up with email
 - [ ] User can log in with credentials
 - [ ] User profile is created automatically
 - [ ] Password reset works (if implemented)
 
 #### Auctions
+
 - [ ] Users can view all active auctions
 - [ ] Auction details display correctly
 - [ ] Time remaining updates in real-time
 - [ ] Ended auctions show as ended
 
 #### Bidding
+
 - [ ] Users can place bids on active auctions
 - [ ] Bid amount validation works
 - [ ] Real-time bid updates work
 - [ ] Users can see their bid history
 
 #### Admin Functions
+
 - [ ] Admin can create new auctions
 - [ ] Image upload and compression works
 - [ ] Admin can edit existing auctions
@@ -355,6 +392,7 @@ Currently configured for Swish payments. To modify:
 - [ ] Payment verification interface works
 
 #### Payment System
+
 - [ ] Won auction shows payment option
 - [ ] QR code generates correctly
 - [ ] Phone number submission works
@@ -380,38 +418,48 @@ npm install --save-dev @testing-library/react @testing-library/jest-dom vitest
 ### Common Issues
 
 #### Environment Variables Not Working
+
 **Problem**: App shows connection errors
-**Solution**: 
+**Solution**:
+
 - Ensure `.env.local` file is in the root directory
 - Verify variable names start with `VITE_`
 - Restart development server after changes
 
 #### Database Connection Errors
+
 **Problem**: "Failed to fetch" errors
 **Solution**:
+
 - Check Supabase project URL and API key
 - Verify your Supabase project is active
 - Check browser network tab for specific error details
 
 #### Migration Fails
+
 **Problem**: SQL errors when running migration
 **Solution**:
+
 - Ensure you have a fresh Supabase project
 - Copy the entire migration file content
 - Run in SQL Editor, not CLI
 - Check for any existing tables with same names
 
 #### Images Not Uploading
+
 **Problem**: Image upload fails with 400 error
 **Solution**:
+
 - Verify storage bucket exists
 - Check RLS policies are applied
 - Ensure file size is reasonable (< 10MB)
 - Check browser console for specific errors
 
 #### Real-time Updates Not Working
+
 **Problem**: Bids don't update in real-time
 **Solution**:
+
 - Check browser network tab for WebSocket connections
 - Verify Supabase real-time is enabled
 - Check RLS policies allow reading bid data
@@ -420,11 +468,13 @@ npm install --save-dev @testing-library/react @testing-library/jest-dom vitest
 ### Performance Issues
 
 #### Slow Loading
+
 - Optimize images (already implemented)
 - Enable caching on your hosting provider
 - Consider implementing lazy loading for auction lists
 
 #### High Database Usage
+
 - Review and optimize queries
 - Implement pagination for large auction lists
 - Add database indexes for frequently queried fields
@@ -460,12 +510,14 @@ npm install --save-dev @testing-library/react @testing-library/jest-dom vitest
 ### Adding New Features
 
 #### Adding a New Page
+
 1. Create component in `src/components/YourFeature/`
 2. Add routing in `src/App.tsx`
 3. Update navigation if needed
 4. Add proper TypeScript interfaces
 
 #### Adding Database Features
+
 1. Create migration file with timestamp
 2. Test migration on development database
 3. Update TypeScript interfaces in `src/lib/supabase.ts`
@@ -474,17 +526,20 @@ npm install --save-dev @testing-library/react @testing-library/jest-dom vitest
 ## 📚 Additional Resources
 
 ### Supabase Documentation
+
 - [Supabase Docs](https://supabase.com/docs)
 - [Row Level Security](https://supabase.com/docs/guides/auth/row-level-security)
 - [Real-time Subscriptions](https://supabase.com/docs/guides/realtime)
 - [Storage](https://supabase.com/docs/guides/storage)
 
 ### React & TypeScript
+
 - [React Documentation](https://react.dev/)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [Tailwind CSS](https://tailwindcss.com/docs)
 
 ### Payment Integration
+
 - [Swish for Business](https://www.swish.nu/foretag)
 - [QR Code Standards](https://www.qr-code-generator.com/guides/)
 
