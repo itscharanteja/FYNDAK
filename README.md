@@ -67,7 +67,7 @@ Before you begin, ensure you have the following installed:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone [<your-repository-url>](https://github.com/itscharanteja/FYNDAK.git)
+git clone https://github.com/itscharanteja/FYNDAK.git
 cd FYNDAK
 ```
 
