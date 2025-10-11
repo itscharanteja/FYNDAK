@@ -20,13 +20,21 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { profile, authLoading } = useAuth();
+  const { user, profile, authLoading } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
 
-  const navItems = [
-    { id: "home", path: "/dashboard", label: "Home", icon: Home },
+  // Define navigation items based on authentication status
+  const publicNavItems = [
+    { id: "home", path: "/", label: "Home", icon: Home },
+    { id: "about", path: "/about", label: "About", icon: Info },
+    { id: "map", path: "/map", label: "Map", icon: MapPin },
+  ];
+
+  const authenticatedNavItems = [
+    { id: "home", path: "/", label: "Home", icon: Home },
     { id: "auctions", path: "/products", label: "Auctions", icon: Gavel },
+    { id: "dashboard", path: "/dashboard", label: "Dashboard", icon: Package },
     { id: "about", path: "/about", label: "About", icon: Info },
     { id: "sell", path: "/sell", label: "Sell", icon: Banknote },
     { id: "map", path: "/map", label: "Map", icon: MapPin },
@@ -34,13 +42,15 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   // Add admin link if user is admin
   if (profile?.is_admin) {
-    navItems.push({
+    authenticatedNavItems.push({
       id: "admin",
       path: "/admin",
       label: "Admin",
       icon: Settings,
     });
   }
+
+  const navItems = user ? authenticatedNavItems : publicNavItems;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-800 dark:via-gray-900 dark:to-black text-gray-900 dark:text-gray-100 transition-colors duration-300">
@@ -52,24 +62,30 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <nav className="bg-transparent py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            {/* Left side - User Profile (Floating) */}
+            {/* Left side - User Profile or Login (Floating) */}
             <div className="flex items-center">
-              <NavLink to="/profile" className="group">
-                <div className="w-12 h-12 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-105 border border-gray-200/50 dark:border-gray-700/50">
-                  <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <User className="w-4 h-4 text-white" />
+              {user ? (
+                <NavLink to="/profile" className="group">
+                  <div className="w-12 h-12 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-105 border border-gray-200/50 dark:border-gray-700/50">
+                    <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <User className="w-4 h-4 text-white" />
+                    </div>
                   </div>
-                </div>
-              </NavLink>
+                </NavLink>
+              ) : (
+                <button
+                  onClick={() => (window.location.href = "/dashboard")}
+                  className="group px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-medium"
+                >
+                  Sign In
+                </button>
+              )}
             </div>
 
             {/* Center - Logo and Navigation (Floating) */}
             <div className="flex items-center gap-6">
               {/* Logo */}
-              <NavLink
-                to="/dashboard"
-                className="flex items-center gap-3 group"
-              >
+              <NavLink to="/" className="flex items-center gap-3 group">
                 <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <Package className="w-5 h-5 text-white" />
                 </div>
@@ -81,9 +97,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               {/* Navigation Items (Floating Container) */}
               <div className="hidden md:flex items-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-lg px-2 py-2 border border-gray-200/50 dark:border-gray-700/50">
                 {navItems.map((item) => {
-                  const isActive =
-                    location.pathname === item.path ||
-                    (item.id === "home" && location.pathname === "/dashboard");
+                  const isActive = location.pathname === item.path;
                   return (
                     <NavLink
                       key={item.id}

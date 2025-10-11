@@ -109,7 +109,7 @@ export const Dashboard: React.FC = () => {
     }
 
     // Static Swish data - will be updated later with actual merchant details
-    const phoneNumber = "+46764459662"; // Static merchant phone number
+    const phoneNumber = "+46701234567"; // Static merchant phone number
     const amount = bid.amount;
     const message = `FYNDAK-${bid.id}`; // Simple reference
     const swishUrl = generateSwishQR(phoneNumber, amount, message);

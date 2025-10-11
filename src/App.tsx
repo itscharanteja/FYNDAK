@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { LoginForm } from "./components/Auth/LoginForm";
 import { SignUpForm } from "./components/Auth/SignUpForm";
 import { Layout } from "./components/Layout/Layout";
+import Homepage from "./components/Homepage/Homepage";
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { ProductsPage } from "./components/Products/ProductsPage";
 import { ProfilePage } from "./components/Profile/ProfilePage";
@@ -17,7 +18,10 @@ import {
   Navigate,
 } from "react-router-dom";
 
-const AppContent: React.FC = () => {
+// Protected Route component for authenticated-only pages
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { user, loading } = useAuth();
   const [showSignUp, setShowSignUp] = useState(false);
 
@@ -37,17 +41,64 @@ const AppContent: React.FC = () => {
     );
   }
 
+  return <>{children}</>;
+};
+
+const AppContent: React.FC = () => {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-800 dark:to-black">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-500"></div>
+      </div>
+    );
+  }
+
   return (
     <Layout>
       <Routes>
-        <Route path="/dashboard" element={<Dashboard />} />
+        {/* Public routes - accessible without authentication */}
+        <Route path="/" element={<Homepage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/about" element={<AboutPage />} />
-        <Route path="/sell" element={<SellPage />} />
         <Route path="/map" element={<MapPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/admin" element={<AdminPanel />} />
-        <Route path="*" element={<Navigate to="/dashboard" />} />
+
+        {/* Protected routes - require authentication */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sell"
+          element={
+            <ProtectedRoute>
+              <SellPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPanel />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Layout>
   );
