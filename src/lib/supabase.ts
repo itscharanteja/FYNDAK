@@ -94,6 +94,9 @@ export type Product = {
   seller_id?: string;
   status: "active" | "ended" | "pending";
   end_time?: string;
+  category?: string;
+  location?: string;
+  condition?: string;
   created_at: string;
   updated_at: string;
 };

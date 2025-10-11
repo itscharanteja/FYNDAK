@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase, Product } from "../../lib/supabase";
 import { useAuth } from "../../contexts/AuthContext";
-import { Gavel, Clock, TrendingUp, DollarSign } from "lucide-react";
+import { Gavel, Clock, Banknote, MapPin, Tag, X, User } from "lucide-react";
 
 export const ProductsPage: React.FC = () => {
   const { user } = useAuth();
@@ -130,13 +130,18 @@ export const ProductsPage: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="max-w-7xl mx-auto">
+      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-200">
-          Active Auctions
-        </h1>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-200">
+            Auctions
+          </h1>
+        </div>
+
+        {/* Products count */}
         <p className="text-gray-600 dark:text-gray-400 transition-colors duration-200">
-          Browse and bid on available products
+          {products.length} products found
         </p>
       </div>
 
@@ -157,156 +162,283 @@ export const ProductsPage: React.FC = () => {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-900/20 overflow-hidden hover:shadow-xl transition-all duration-200"
-            >
-              <div className="h-56 bg-gradient-to-br from-green-100 to-emerald-200 dark:from-gray-700 dark:to-gray-900 flex items-center justify-center transition-colors duration-200">
-                {product.image_url ? (
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <Gavel className="w-20 h-20 text-green-400" />
-                )}
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {products.map((product, index) => {
+            // Array of beautiful background gradients
+            const backgrounds = [
+              "bg-gradient-to-br from-amber-200 via-orange-200 to-yellow-200", // Warm browns like ceramic vase
+              "bg-gradient-to-br from-gray-200 via-slate-200 to-gray-300", // Neutral like camera
+              "bg-gradient-to-br from-yellow-200 via-amber-200 to-orange-200", // Golden like leather wallet
+              "bg-gradient-to-br from-rose-100 via-pink-100 to-purple-100", // Soft like abstract art
+              "bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100", // Cool tones
+              "bg-gradient-to-br from-green-100 via-emerald-100 to-teal-100", // Nature tones
+              "bg-gradient-to-br from-pink-100 via-rose-100 to-red-100", // Warm pinks
+              "bg-gradient-to-br from-violet-100 via-purple-100 to-indigo-100", // Purple spectrum
+            ];
 
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-200">
-                  {product.name}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2 transition-colors duration-200">
-                  {product.description || "No description available"}
-                </p>
+            const cardBg = backgrounds[index % backgrounds.length];
 
-                <div className="space-y-3 mb-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-200">
-                      Starting Price:
-                    </span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white transition-colors duration-200">
-                      {formatPrice(product.starting_price)}
-                    </span>
-                  </div>
+            // Use actual product data or fallback values
+            const category = product.category || "Uncategorized";
+            const location = product.location || "Location not specified";
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-green-500" />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-200">
-                        Current Bid:
-                      </span>
-                    </div>
-                    <span className="text-lg font-bold text-green-600 dark:text-green-400 transition-colors duration-200">
+            return (
+              <div
+                key={product.id}
+                className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-900/20 overflow-hidden hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                onClick={() => {
+                  setSelectedProduct(product);
+                  setBidAmount((product.current_price + 1).toFixed(2));
+                  setError("");
+                  setSuccess("");
+                }}
+              >
+                {/* Image Container */}
+                <div
+                  className={`relative h-48 ${cardBg} flex items-center justify-center transition-all duration-300`}
+                >
+                  {product.image_url ? (
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Gavel className="w-16 h-16 text-gray-400 opacity-50" />
+                  )}
+                </div>
+
+                {/* Card Content */}
+                <div className="p-4">
+                  {/* Product Title */}
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors duration-200">
+                    {product.name}
+                  </h3>
+
+                  {/* Price */}
+                  <div className="mb-3">
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">
                       {formatPrice(product.current_price)}
                     </span>
                   </div>
 
+                  {/* Description */}
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
+                    {product.description ||
+                      "A beautiful, one-of-a-kind item for your collection."}
+                  </p>
+
+                  {/* Category Tag */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900/30 rounded-full">
+                      <Tag className="w-3 h-3 text-green-600 dark:text-green-400" />
+                      <span className="text-xs font-medium text-green-700 dark:text-green-400">
+                        {category}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Location */}
+                  <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mb-4">
+                    <MapPin className="w-3 h-3 text-red-500" />
+                    <span>{location}</span>
+                  </div>
+
+                  {/* Time remaining */}
                   {product.end_time && (
-                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 transition-colors duration-200">
-                      <Clock className="w-4 h-4" />
-                      <span>Ends: {formatDate(product.end_time)}</span>
+                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                      <Clock className="w-3 h-3" />
+                      <span>Ends {formatDate(product.end_time)}</span>
                     </div>
                   )}
                 </div>
-
-                <button
-                  onClick={() => {
-                    setSelectedProduct(product);
-                    setBidAmount((product.current_price + 1).toFixed(2));
-                    setError("");
-                    setSuccess("");
-                  }}
-                  className="w-full bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200 flex items-center justify-center gap-2"
-                >
-                  <Gavel className="w-5 h-5" />
-                  Place Bid
-                </button>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
       {selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-6 transition-colors duration-200">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-200">
-              Place Your Bid
-            </h3>
-
-            <div className="mb-6">
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-2 transition-colors duration-200">
-                {selectedProduct.name}
-              </h4>
-              <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-gray-600 dark:text-gray-400 transition-colors duration-200">
-                  Current Bid:
-                </span>
-                <span className="font-bold text-green-600 dark:text-green-400 transition-colors duration-200">
-                  {formatPrice(selectedProduct.current_price)}
-                </span>
-              </div>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transition-colors duration-200 animate-in slide-in-from-bottom-4 duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header with Close Button */}
+            <div className="sticky top-0 flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-t-2xl">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-200">
+                Product Details
+              </h2>
+              <button
+                onClick={() => {
+                  setSelectedProduct(null);
+                  setBidAmount("");
+                  setError("");
+                }}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors duration-200"
+              >
+                <X className="w-6 h-6 text-gray-500 dark:text-gray-400" />
+              </button>
             </div>
 
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-sm transition-all duration-200">
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handlePlaceBid} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="bidAmount"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
-                >
-                  Your Bid Amount
-                </label>
-                <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    id="bidAmount"
-                    type="number"
-                    step="0.01"
-                    min={selectedProduct.current_price + 0.01}
-                    value={bidAmount}
-                    onChange={(e) => setBidAmount(e.target.value)}
-                    required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-                    placeholder="Enter your bid"
-                  />
+            {/* Product Image */}
+            <div className="relative h-64 md:h-80 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
+              {selectedProduct.image_url ? (
+                <img
+                  src={selectedProduct.image_url}
+                  alt={selectedProduct.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Gavel className="w-20 h-20 text-gray-400 dark:text-gray-500" />
                 </div>
-                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">
-                  Minimum bid:{" "}
-                  {formatPrice(selectedProduct.current_price + 0.01)}
+              )}
+            </div>
+
+            {/* Product Information */}
+            <div className="p-6 space-y-6">
+              {/* Product Title and Current Price */}
+              <div>
+                <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-200">
+                  {selectedProduct.name}
+                </h3>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Current Bid:
+                    </span>
+                    <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+                      {formatPrice(selectedProduct.current_price)}
+                    </span>
+                  </div>
+                  {selectedProduct.end_time && (
+                    <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                      <Clock className="w-4 h-4" />
+                      <span>Ends {formatDate(selectedProduct.end_time)}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Product Description */}
+              <div>
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                  Description
+                </h4>
+                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                  {selectedProduct.description ||
+                    "A beautiful, one-of-a-kind item perfect for your collection. This carefully curated piece offers exceptional quality and unique characteristics that make it a standout addition to any space."}
                 </p>
               </div>
 
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedProduct(null);
-                    setBidAmount("");
-                    setError("");
-                  }}
-                  className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={bidding}
-                  className="flex-1 bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {bidding ? "Placing Bid..." : "Confirm Bid"}
-                </button>
+              {/* Product Details Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Tag className="w-4 h-4 text-green-500" />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Category:
+                    </span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {selectedProduct.category || "Uncategorized"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-red-500" />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Location:
+                    </span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {selectedProduct.location || "Location not specified"}
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-blue-500" />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Seller:
+                    </span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      Anonymous Seller
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Gavel className="w-4 h-4 text-purple-500" />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Condition:
+                    </span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {selectedProduct.condition || "Not specified"}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </form>
+
+              {/* Error Message */}
+              {error && (
+                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-sm transition-all duration-200">
+                  {error}
+                </div>
+              )}
+
+              {/* Bidding Form */}
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Place Your Bid
+                </h4>
+                <form onSubmit={handlePlaceBid} className="space-y-4">
+                  <div>
+                    <label
+                      htmlFor="bidAmount"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
+                    >
+                      Your Bid Amount
+                    </label>
+                    <div className="relative">
+                      <Banknote className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        id="bidAmount"
+                        type="number"
+                        step="0.01"
+                        min={selectedProduct.current_price + 0.01}
+                        value={bidAmount}
+                        onChange={(e) => setBidAmount(e.target.value)}
+                        required
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                        placeholder="Enter your bid"
+                      />
+                    </div>
+                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">
+                      Minimum bid:{" "}
+                      {formatPrice(selectedProduct.current_price + 0.01)}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedProduct(null);
+                        setBidAmount("");
+                        setError("");
+                      }}
+                      className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={bidding}
+                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                    >
+                      {bidding ? "Placing Bid..." : "Place Bid"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -47,6 +47,9 @@ export const AdminPanel: React.FC = () => {
     image_url: "",
     starting_price: "",
     end_time: "",
+    category: "",
+    location: "",
+    condition: "",
   });
 
   useEffect(() => {
@@ -154,6 +157,9 @@ export const AdminPanel: React.FC = () => {
         image_url: product.image_url || "",
         starting_price: product.starting_price.toString(),
         end_time: convertToLocalDatetime(product.end_time),
+        category: product.category || "",
+        location: product.location || "",
+        condition: product.condition || "",
       });
     } else {
       setEditingProduct(null);
@@ -163,6 +169,9 @@ export const AdminPanel: React.FC = () => {
         image_url: "",
         starting_price: "",
         end_time: "",
+        category: "",
+        location: "",
+        condition: "",
       });
       // Clear image state for new product
       if (previewUrl) {
@@ -343,6 +352,9 @@ export const AdminPanel: React.FC = () => {
           : parseFloat(formData.starting_price),
         end_time: convertToISOString(formData.end_time),
         status: "active" as const,
+        category: formData.category,
+        location: formData.location,
+        condition: formData.condition,
       };
 
       if (editingProduct) {
@@ -728,6 +740,93 @@ export const AdminPanel: React.FC = () => {
                 />
               </div>
 
+              {/* New fields: Category, Location, Condition */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label
+                    htmlFor="category"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
+                  >
+                    Category
+                  </label>
+                  <select
+                    id="category"
+                    value={formData.category}
+                    onChange={(e) =>
+                      setFormData({ ...formData, category: e.target.value })
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Home & Garden">Home & Garden</option>
+                    <option value="Collectibles">Collectibles</option>
+                    <option value="Fashion">Fashion</option>
+                    <option value="Crafts">Crafts</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Art">Art</option>
+                    <option value="Jewelry">Jewelry</option>
+                    <option value="Books">Books</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="location"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
+                  >
+                    Location
+                  </label>
+                  <select
+                    id="location"
+                    value={formData.location}
+                    onChange={(e) =>
+                      setFormData({ ...formData, location: e.target.value })
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  >
+                    <option value="">Select Location</option>
+                    <option value="Stockholm, Sweden">Stockholm, Sweden</option>
+                    <option value="Göteborg, Sweden">Göteborg, Sweden</option>
+                    <option value="Malmö, Sweden">Malmö, Sweden</option>
+                    <option value="Uppsala, Sweden">Uppsala, Sweden</option>
+                    <option value="Linköping, Sweden">Linköping, Sweden</option>
+                    <option value="Örebro, Sweden">Örebro, Sweden</option>
+                    <option value="Helsingborg, Sweden">
+                      Helsingborg, Sweden
+                    </option>
+                    <option value="Jönköping, Sweden">Jönköping, Sweden</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="condition"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
+                  >
+                    Condition
+                  </label>
+                  <select
+                    id="condition"
+                    value={formData.condition}
+                    onChange={(e) =>
+                      setFormData({ ...formData, condition: e.target.value })
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                  >
+                    <option value="">Select Condition</option>
+                    <option value="New">New</option>
+                    <option value="Like New">Like New</option>
+                    <option value="Excellent">Excellent</option>
+                    <option value="Very Good">Very Good</option>
+                    <option value="Good">Good</option>
+                    <option value="Fair">Fair</option>
+                    <option value="Poor">Poor</option>
+                  </select>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200">
                   Product Image
@@ -809,7 +908,7 @@ export const AdminPanel: React.FC = () => {
                     htmlFor="starting_price"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
                   >
-                    Starting Price ($)
+                    Starting Price (SEK)
                   </label>
                   <input
                     id="starting_price"

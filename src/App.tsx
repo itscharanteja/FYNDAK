@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { LoginForm } from './components/Auth/LoginForm';
-import { SignUpForm } from './components/Auth/SignUpForm';
-import { Layout } from './components/Layout/Layout';
-import { Dashboard } from './components/Dashboard/Dashboard';
-import { ProductsPage } from './components/Products/ProductsPage';
-import { ProfilePage } from './components/Profile/ProfilePage';
-import { AdminPanel } from './components/Admin/AdminPanel';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { LoginForm } from "./components/Auth/LoginForm";
+import { SignUpForm } from "./components/Auth/SignUpForm";
+import { Layout } from "./components/Layout/Layout";
+import { Dashboard } from "./components/Dashboard/Dashboard";
+import { ProductsPage } from "./components/Products/ProductsPage";
+import { ProfilePage } from "./components/Profile/ProfilePage";
+import { AdminPanel } from "./components/Admin/AdminPanel";
+import { AboutPage } from "./components/About/AboutPage";
+import { SellPage } from "./components/Sell/SellPage";
+import { MapPage } from "./components/Map/MapPage";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();
@@ -34,6 +42,9 @@ const AppContent: React.FC = () => {
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/products" element={<ProductsPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/sell" element={<SellPage />} />
+        <Route path="/map" element={<MapPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="*" element={<Navigate to="/dashboard" />} />
