@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import { LoginForm } from "./components/Auth/LoginForm";
 import { SignUpForm } from "./components/Auth/SignUpForm";
 import { Layout } from "./components/Layout/Layout";
@@ -17,6 +18,9 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+
+// Import i18n configuration
+import "./lib/i18n";
 
 // Protected Route component for authenticated-only pages
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
@@ -107,9 +111,11 @@ const AppContent: React.FC = () => {
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </LanguageProvider>
     </Router>
   );
 }

@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
+import { LanguageSwitcher } from "../LanguageSwitcher";
+import { useAppTranslation } from "../../hooks/useLanguage";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -22,22 +24,28 @@ interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, profile, authLoading } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { t } = useAppTranslation();
   const location = useLocation();
 
   // Define navigation items based on authentication status
   const publicNavItems = [
-    { id: "home", path: "/", label: "Home", icon: Home },
-    { id: "about", path: "/about", label: "About", icon: Info },
-    { id: "map", path: "/map", label: "Map", icon: MapPin },
+    { id: "home", path: "/", label: t("home"), icon: Home },
+    { id: "about", path: "/about", label: t("about"), icon: Info },
+    { id: "map", path: "/map", label: t("map"), icon: MapPin },
   ];
 
   const authenticatedNavItems = [
-    { id: "home", path: "/", label: "Home", icon: Home },
-    { id: "auctions", path: "/products", label: "Auctions", icon: Gavel },
-    { id: "dashboard", path: "/dashboard", label: "Dashboard", icon: Package },
-    { id: "about", path: "/about", label: "About", icon: Info },
-    { id: "sell", path: "/sell", label: "Sell", icon: Banknote },
-    { id: "map", path: "/map", label: "Map", icon: MapPin },
+    { id: "home", path: "/", label: t("home"), icon: Home },
+    { id: "auctions", path: "/products", label: t("auctions"), icon: Gavel },
+    {
+      id: "dashboard",
+      path: "/dashboard",
+      label: t("dashboard"),
+      icon: Package,
+    },
+    { id: "about", path: "/about", label: t("about"), icon: Info },
+    { id: "sell", path: "/sell", label: t("sell"), icon: Banknote },
+    { id: "map", path: "/map", label: t("map"), icon: MapPin },
   ];
 
   // Add admin link if user is admin
@@ -45,7 +53,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     authenticatedNavItems.push({
       id: "admin",
       path: "/admin",
-      label: "Admin",
+      label: t("admin"),
       icon: Settings,
     });
   }
@@ -115,8 +123,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               </div>
             </div>
 
-            {/* Right side - Theme Toggle (Floating) */}
-            <div className="flex items-center">
+            {/* Right side - Language & Theme Toggles (Floating) - UPDATED */}
+            <div className="flex items-center gap-3">
+              <LanguageSwitcher />
+
               <button
                 onClick={toggleTheme}
                 className="w-12 h-12 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-105 border border-gray-200/50 dark:border-gray-700/50 group"

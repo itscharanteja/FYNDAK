@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { LogIn } from "lucide-react";
+import { useAppTranslation } from "../../hooks/useLanguage";
 
 interface LoginFormProps {
   onToggleForm: () => void;
@@ -11,6 +12,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { signIn, authLoading } = useAuth();
+  const { t } = useAppTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,10 +33,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
             <LogIn className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Welcome to FYNDAK
+            {t("welcome")}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Sign in to start bidding on premium auctions
+            {t("auth.signInSubtitle")}
           </p>
         </div>
 
@@ -50,7 +52,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >
-              Email Address
+              {t("auth.email")}
             </label>
             <input
               id="email"
@@ -68,7 +70,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
               htmlFor="password"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >
-              Password
+              {t("auth.password")}
             </label>
             <input
               id="password"
@@ -86,18 +88,18 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
             disabled={authLoading}
             className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-3 rounded-2xl font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            {authLoading ? "Signing in..." : "Sign In"}
+            {authLoading ? t("auth.signingIn") : t("signIn")}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-gray-600 dark:text-gray-400">
-            Don't have an account?{" "}
+            {t("auth.noAccount")}{" "}
             <button
               onClick={onToggleForm}
               className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors duration-300"
             >
-              Sign Up
+              {t("signUp")}
             </button>
           </p>
         </div>

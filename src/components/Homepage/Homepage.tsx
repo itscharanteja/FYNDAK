@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Heart, MapPin } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../contexts/AuthContext";
+import { useAppTranslation } from "../../hooks/useLanguage";
 
 interface Product {
   id: string;
@@ -16,31 +17,6 @@ interface Product {
   created_at: string;
 }
 
-// Why Choose Us data
-const whyChooseUs = [
-  {
-    id: 1,
-    icon: "🔒",
-    title: "Secure Transactions",
-    description:
-      "Your payments and personal information are protected with bank-level security.",
-  },
-  {
-    id: 2,
-    icon: "🎧",
-    title: "24/7 Support",
-    description:
-      "Our dedicated support team is always here to help you with any questions or issues.",
-  },
-  {
-    id: 3,
-    icon: "🌍",
-    title: "Global Reach",
-    description:
-      "Connect with buyers and sellers from around the world and expand your market.",
-  },
-];
-
 // Product Card Component
 const ProductCard: React.FC<{
   product: Product;
@@ -48,6 +24,7 @@ const ProductCard: React.FC<{
   onToggleWishlist: (product: Product) => void;
   onProductClick?: (product: Product) => void;
 }> = ({ product, isWished, onToggleWishlist, onProductClick }) => {
+  const { t } = useAppTranslation();
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("sv-SE", {
       style: "currency",
@@ -60,7 +37,7 @@ const ProductCard: React.FC<{
     const now = new Date();
     const diff = end.getTime() - now.getTime();
 
-    if (diff <= 0) return "Ended";
+    if (diff <= 0) return t("product.ended");
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -106,7 +83,7 @@ const ProductCard: React.FC<{
         <div className="flex items-center justify-between mb-3">
           <div>
             <span className="text-xs text-slate-500 dark:text-slate-400">
-              Current Bid
+              {t("product.currentBid")}
             </span>
             <div className="text-lg font-bold text-emerald-600">
               {formatPrice(product.current_price)}
@@ -114,7 +91,7 @@ const ProductCard: React.FC<{
           </div>
           <div className="text-right">
             <span className="text-xs text-slate-500 dark:text-slate-400">
-              Time Left
+              {t("product.timeLeft")}
             </span>
             <div className="text-sm font-semibold text-orange-500">
               {formatTimeLeft(product.end_time)}
@@ -131,7 +108,7 @@ const ProductCard: React.FC<{
         </div>
 
         <button className="w-full bg-emerald-600 text-white py-2.5 rounded-lg font-semibold hover:bg-emerald-700 transition-colors">
-          Place Bid
+          {t("product.placeBid")}
         </button>
       </div>
     </div>
@@ -140,9 +117,32 @@ const ProductCard: React.FC<{
 
 const Homepage: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useAppTranslation();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState<Product[]>([]);
+
+  // Why Choose Us data - now using translations
+  const whyChooseUsData = [
+    {
+      id: 1,
+      icon: "🔒",
+      title: t("whyChoose.secureTitle"),
+      description: t("whyChoose.secureDesc"),
+    },
+    {
+      id: 2,
+      icon: "🎧",
+      title: t("whyChoose.supportTitle"),
+      description: t("whyChoose.supportDesc"),
+    },
+    {
+      id: 3,
+      icon: "🌍",
+      title: t("whyChoose.globalTitle"),
+      description: t("whyChoose.globalDesc"),
+    },
+  ];
 
   useEffect(() => {
     fetchProducts();
@@ -202,12 +202,13 @@ const Homepage: React.FC = () => {
           {/* Floating Hero Card */}
           <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-8 md:p-12 text-center animate-fade-up">
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-              Your <span className="text-emerald-600">Nordic</span> Marketplace
+              {t("hero.title")}{" "}
+              <span className="text-emerald-600">
+                {t("hero.titleHighlight")}
+              </span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Discover Nordic treasures, vintage finds, and handmade crafts.
-              Buy, sell, and connect with a community of Scandinavian
-              enthusiasts.
+              {t("hero.subtitle")}
             </p>
 
             {/* Stats in floating containers */}
@@ -217,19 +218,19 @@ const Homepage: React.FC = () => {
                   {featuredProducts.length}+
                 </div>
                 <div className="text-emerald-100 text-sm font-medium">
-                  Live Auctions
+                  {t("hero.stats.liveAuctions")}
                 </div>
               </div>
               <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white backdrop-blur-sm border border-blue-400/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-fade-up animate-delay-300">
                 <div className="text-3xl font-bold">50K+</div>
                 <div className="text-blue-100 text-sm font-medium">
-                  Happy Buyers
+                  {t("hero.stats.happyBuyers")}
                 </div>
               </div>
               <div className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl p-6 text-white backdrop-blur-sm border border-teal-400/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-fade-up animate-delay-400">
                 <div className="text-3xl font-bold">99%</div>
                 <div className="text-teal-100 text-sm font-medium">
-                  Satisfaction
+                  {t("hero.stats.satisfaction")}
                 </div>
               </div>
             </div>
@@ -244,7 +245,7 @@ const Homepage: React.FC = () => {
                 }
               }}
             >
-              Explore Auctions
+              {t("hero.exploreAuctions")}
             </button>
           </div>
         </div>
@@ -256,10 +257,10 @@ const Homepage: React.FC = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Premium Auctions
+                {t("premiumAuctions.title")}
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Our top 3 highest value auctions - luxury at its finest
+                {t("premiumAuctions.subtitle")}
               </p>
             </div>
           </div>
@@ -267,7 +268,7 @@ const Homepage: React.FC = () => {
           {featuredProducts.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500 dark:text-gray-400">
-                No featured auctions available at the moment
+                {t("premiumAuctions.noAuctions")}
               </p>
             </div>
           ) : (
@@ -297,16 +298,15 @@ const Homepage: React.FC = () => {
         <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-8 animate-fade-up animate-delay-300">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Why Choose FYNDAK?
+              {t("whyChoose.title")}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Join thousands of satisfied users who trust FYNDAK for authentic
-              auctions and premium items
+              {t("whyChoose.subtitle")}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {whyChooseUs.map((item, index) => (
+            {whyChooseUsData.map((item, index) => (
               <div
                 key={item.id}
                 className={`group text-center bg-gradient-to-br from-white/70 to-gray-50/70 dark:from-gray-700/70 dark:to-gray-800/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/30 dark:border-gray-600/30 hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-up animate-delay-${
@@ -337,15 +337,17 @@ const Homepage: React.FC = () => {
           <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-                Ready to Start <span className="text-emerald-100">Selling</span>
+                {t("cta.title")}{" "}
+                <span className="text-emerald-100">
+                  {t("cta.titleHighlight")}
+                </span>
                 ?
               </h2>
               <p className="text-xl text-emerald-50 mb-8 leading-relaxed">
-                Join thousands of entrepreneurs who have turned their passion
-                into profit on FYNDAK.
+                {t("cta.subtitle")}
               </p>
               <button className="bg-white text-emerald-600 font-bold px-8 py-4 rounded-2xl text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 hover:bg-gray-50">
-                Start Selling Today
+                {t("cta.startSelling")}
               </button>
             </div>
 
@@ -357,26 +359,32 @@ const Homepage: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-white text-lg">
-                      Seller Dashboard
+                      {t("cta.dashboard.title")}
                     </h4>
                     <p className="text-emerald-100 text-sm">
-                      Manage your listings
+                      {t("cta.dashboard.subtitle")}
                     </p>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-2 border-b border-white/10">
-                    <span className="text-emerald-100">Active Listings</span>
+                    <span className="text-emerald-100">
+                      {t("cta.dashboard.activeListings")}
+                    </span>
                     <span className="text-white font-semibold text-lg">12</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-white/10">
-                    <span className="text-emerald-100">Total Sales</span>
+                    <span className="text-emerald-100">
+                      {t("cta.dashboard.totalSales")}
+                    </span>
                     <span className="text-white font-semibold text-lg">
                       2,450 kr
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-2">
-                    <span className="text-emerald-100">This Month</span>
+                    <span className="text-emerald-100">
+                      {t("cta.dashboard.thisMonth")}
+                    </span>
                     <span className="text-emerald-200 font-semibold text-lg">
                       +18%
                     </span>
