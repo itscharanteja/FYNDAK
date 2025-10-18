@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { supabase, Product } from "../../lib/supabase";
 import { useAuth } from "../../contexts/AuthContext";
 import { Gavel, Clock, Banknote, MapPin, Tag, X, User } from "lucide-react";
+import { useAppTranslation } from "../../hooks/useLanguage";
 
 export const ProductsPage: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useAppTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -74,7 +76,7 @@ export const ProductsPage: React.FC = () => {
 
     if (amount <= selectedProduct.current_price) {
       setError(
-        `Bid must be higher than current price of ${formatPrice(
+        `${t("products.bidHigherThan")} ${formatPrice(
           selectedProduct.current_price
         )}`
       );
@@ -94,11 +96,13 @@ export const ProductsPage: React.FC = () => {
 
       if (bidError) throw bidError;
 
-      setSuccess("Bid placed successfully!");
+      setSuccess(t("products.bidPlacedSuccess"));
       setBidAmount("");
       setSelectedProduct(null);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to place bid");
+      setError(
+        err instanceof Error ? err.message : t("products.failedToPlaceBid")
+      );
     } finally {
       setBidding(false);
     }
@@ -112,7 +116,7 @@ export const ProductsPage: React.FC = () => {
   };
 
   const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return "No end date";
+    if (!dateString) return t("products.noEndDate");
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -135,13 +139,13 @@ export const ProductsPage: React.FC = () => {
       <div className="mb-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-200">
-            Auctions
+            {t("products.title")}
           </h1>
         </div>
 
         {/* Products count */}
         <p className="text-gray-600 dark:text-gray-400 transition-colors duration-200">
-          {products.length} products found
+          {products.length} {t("products.productsFound")}
         </p>
       </div>
 
@@ -155,10 +159,10 @@ export const ProductsPage: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-900/20 p-12 text-center transition-colors duration-200">
           <Gavel className="w-16 h-16 text-gray-400 dark:text-gray-500 transition-colors duration-200" />
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 transition-colors duration-200">
-            No Active Auctions
+            {t("products.noActiveAuctions")}
           </h3>
           <p className="text-gray-600 dark:text-gray-400 transition-colors duration-200">
-            Check back later for new products
+            {t("products.checkBackLater")}
           </p>
         </div>
       ) : (
@@ -179,8 +183,9 @@ export const ProductsPage: React.FC = () => {
             const cardBg = backgrounds[index % backgrounds.length];
 
             // Use actual product data or fallback values
-            const category = product.category || "Uncategorized";
-            const location = product.location || "Location not specified";
+            const category = product.category || t("products.uncategorized");
+            const location =
+              product.location || t("products.locationNotSpecified");
 
             return (
               <div
@@ -248,7 +253,9 @@ export const ProductsPage: React.FC = () => {
                   {product.end_time && (
                     <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                       <Clock className="w-3 h-3" />
-                      <span>Ends {formatDate(product.end_time)}</span>
+                      <span>
+                        {t("products.ends")} {formatDate(product.end_time)}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -267,7 +274,7 @@ export const ProductsPage: React.FC = () => {
             {/* Modal Header with Close Button */}
             <div className="sticky top-0 flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-t-2xl">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-200">
-                Product Details
+                {t("products.details")}
               </h2>
               <button
                 onClick={() => {
@@ -306,7 +313,7 @@ export const ProductsPage: React.FC = () => {
                 <div className="flex items-center gap-4 mb-4">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Current Bid:
+                      {t("products.currentBid")}:
                     </span>
                     <span className="text-2xl font-bold text-green-600 dark:text-green-400">
                       {formatPrice(selectedProduct.current_price)}
@@ -315,7 +322,10 @@ export const ProductsPage: React.FC = () => {
                   {selectedProduct.end_time && (
                     <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
                       <Clock className="w-4 h-4" />
-                      <span>Ends {formatDate(selectedProduct.end_time)}</span>
+                      <span>
+                        {t("products.ends")}{" "}
+                        {formatDate(selectedProduct.end_time)}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -324,7 +334,7 @@ export const ProductsPage: React.FC = () => {
               {/* Product Description */}
               <div>
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                  Description
+                  {t("products.description")}
                 </h4>
                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                   {selectedProduct.description ||
@@ -338,19 +348,20 @@ export const ProductsPage: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <Tag className="w-4 h-4 text-green-500" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Category:
+                      {t("products.category")}:
                     </span>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {selectedProduct.category || "Uncategorized"}
+                      {selectedProduct.category || t("products.uncategorized")}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-red-500" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Location:
+                      {t("products.location")}:
                     </span>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {selectedProduct.location || "Location not specified"}
+                      {selectedProduct.location ||
+                        t("products.locationNotSpecified")}
                     </span>
                   </div>
                 </div>
@@ -358,19 +369,20 @@ export const ProductsPage: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <User className="w-4 h-4 text-blue-500" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Seller:
+                      {t("products.seller")}:
                     </span>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      Anonymous Seller
+                      {t("products.anonymousSeller")}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Gavel className="w-4 h-4 text-purple-500" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Condition:
+                      {t("products.condition")}:
                     </span>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {selectedProduct.condition || "Not specified"}
+                      {selectedProduct.condition ||
+                        t("products.conditionNotSpecified")}
                     </span>
                   </div>
                 </div>
@@ -386,7 +398,7 @@ export const ProductsPage: React.FC = () => {
               {/* Bidding Form */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Place Your Bid
+                  {t("products.placeBid")}
                 </h4>
                 <form onSubmit={handlePlaceBid} className="space-y-4">
                   <div>
@@ -394,7 +406,7 @@ export const ProductsPage: React.FC = () => {
                       htmlFor="bidAmount"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
                     >
-                      Your Bid Amount
+                      {t("products.yourBidAmount")}
                     </label>
                     <div className="relative">
                       <Banknote className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -407,11 +419,11 @@ export const ProductsPage: React.FC = () => {
                         onChange={(e) => setBidAmount(e.target.value)}
                         required
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-                        placeholder="Enter your bid"
+                        placeholder={t("products.enterBid")}
                       />
                     </div>
                     <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">
-                      Minimum bid:{" "}
+                      {t("products.minimumBid")}:{" "}
                       {formatPrice(selectedProduct.current_price + 0.01)}
                     </p>
                   </div>
@@ -426,14 +438,16 @@ export const ProductsPage: React.FC = () => {
                       }}
                       className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
                     >
-                      Cancel
+                      {t("cancel")}
                     </button>
                     <button
                       type="submit"
                       disabled={bidding}
                       className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                     >
-                      {bidding ? "Placing Bid..." : "Place Bid"}
+                      {bidding
+                        ? t("products.placingBid")
+                        : t("products.placeBid")}
                     </button>
                   </div>
                 </form>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { UserPlus } from "lucide-react";
+import { useAppTranslation } from "../../hooks/useLanguage";
 
 interface SignUpFormProps {
   onToggleForm: () => void;
@@ -14,6 +15,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleForm }) => {
   const [address, setAddress] = useState("");
   const [error, setError] = useState("");
   const { signUp, authLoading } = useAuth();
+  const { t } = useAppTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,10 +38,10 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleForm }) => {
             <UserPlus className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Join FYNDAK
+            {t("welcome")}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Create your account to start bidding on premium auctions
+            {t("auth.signUpSubtitle")}
           </p>
         </div>
 
@@ -55,7 +57,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleForm }) => {
               htmlFor="fullName"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
             >
-              Full Name
+              {t("auth.fullName")}
             </label>
             <input
               id="fullName"

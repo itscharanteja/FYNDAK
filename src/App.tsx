@@ -10,8 +10,6 @@ import { ProductsPage } from "./components/Products/ProductsPage";
 import { ProfilePage } from "./components/Profile/ProfilePage";
 import { AdminPanel } from "./components/Admin/AdminPanel";
 import { AboutPage } from "./components/About/AboutPage";
-import { SellPage } from "./components/Sell/SellPage";
-import { MapPage } from "./components/Map/MapPage";
 import {
   BrowserRouter as Router,
   Routes,
@@ -66,7 +64,6 @@ const AppContent: React.FC = () => {
         <Route path="/" element={<Homepage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/about" element={<AboutPage />} />
-        <Route path="/map" element={<MapPage />} />
 
         {/* Protected routes - require authentication */}
         <Route
@@ -74,14 +71,6 @@ const AppContent: React.FC = () => {
           element={
             <ProtectedRoute>
               <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/sell"
-          element={
-            <ProtectedRoute>
-              <SellPage />
             </ProtectedRoute>
           }
         />

@@ -11,9 +11,11 @@ import {
   X,
   LogOut,
 } from "lucide-react";
+import { useAppTranslation } from "../../hooks/useLanguage";
 
 export const ProfilePage: React.FC = () => {
   const { user, profile, signOut, refreshProfile } = useAuth();
+  const { t } = useAppTranslation();
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -86,10 +88,10 @@ export const ProfilePage: React.FC = () => {
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-200">
-          My Profile
+          {t("profile.title")}
         </h1>
         <p className="text-gray-600 dark:text-gray-300 transition-colors duration-200">
-          Manage your account information
+          {t("profile.manageAccount")}
         </p>
       </div>
 
@@ -123,7 +125,7 @@ export const ProfilePage: React.FC = () => {
                 </p>
                 {profile?.is_admin && (
                   <span className="inline-block mt-2 px-3 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100 text-xs font-semibold rounded-full transition-all duration-200">
-                    Admin
+                    {t("admin")}
                   </span>
                 )}
               </div>
@@ -137,14 +139,14 @@ export const ProfilePage: React.FC = () => {
                     className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200"
                   >
                     <Edit2 className="w-4 h-4" />
-                    Edit Profile
+                    {t("profile.editProfile")}
                   </button>
                   <button
                     onClick={handleLogout}
                     className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition-colors duration-200"
                   >
                     <LogOut className="w-4 h-4" />
-                    Logout
+                    {t("profile.logout")}
                   </button>
                 </>
               ) : (
@@ -153,7 +155,7 @@ export const ProfilePage: React.FC = () => {
                   className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
                 >
                   <X className="w-4 h-4" />
-                  Cancel
+                  {t("cancel")}
                 </button>
               )}
             </div>
@@ -166,10 +168,10 @@ export const ProfilePage: React.FC = () => {
                   <User className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5 transition-colors duration-200" />
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-200">
-                      Full Name
+                      {t("profile.fullName")}
                     </p>
                     <p className="text-gray-900 dark:text-white font-medium transition-colors duration-200">
-                      {profile?.full_name || "Not provided"}
+                      {profile?.full_name || t("profile.notProvided")}
                     </p>
                   </div>
                 </div>
@@ -178,7 +180,7 @@ export const ProfilePage: React.FC = () => {
                   <Mail className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5 transition-colors duration-200" />
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-200">
-                      Email
+                      {t("profile.email")}
                     </p>
                     <p className="text-gray-900 dark:text-white font-medium transition-colors duration-200">
                       {user?.email}
@@ -192,10 +194,10 @@ export const ProfilePage: React.FC = () => {
                   <Phone className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5 transition-colors duration-200" />
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-200">
-                      Phone
+                      {t("profile.phone")}
                     </p>
                     <p className="text-gray-900 dark:text-white font-medium transition-colors duration-200">
-                      {profile?.phone || "Not provided"}
+                      {profile?.phone || t("profile.notProvided")}
                     </p>
                   </div>
                 </div>
@@ -204,10 +206,10 @@ export const ProfilePage: React.FC = () => {
                   <MapPin className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5 transition-colors duration-200" />
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-200">
-                      Address
+                      {t("profile.address")}
                     </p>
                     <p className="text-gray-900 dark:text-white font-medium transition-colors duration-200">
-                      {profile?.address || "Not provided"}
+                      {profile?.address || t("profile.notProvided")}
                     </p>
                   </div>
                 </div>
@@ -221,7 +223,7 @@ export const ProfilePage: React.FC = () => {
                     htmlFor="full_name"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
                   >
-                    Full Name
+                    {t("profile.fullName")}
                   </label>
                   <input
                     id="full_name"
@@ -241,7 +243,7 @@ export const ProfilePage: React.FC = () => {
                     htmlFor="phone"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
                   >
-                    Phone
+                    {t("profile.phone")}
                   </label>
                   <input
                     id="phone"
@@ -260,7 +262,7 @@ export const ProfilePage: React.FC = () => {
                     htmlFor="address"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
                   >
-                    Address
+                    {t("profile.address")}
                   </label>
                   <textarea
                     id="address"
@@ -282,7 +284,7 @@ export const ProfilePage: React.FC = () => {
                   className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Save className="w-4 h-4" />
-                  {loading ? "Saving..." : "Save Changes"}
+                  {loading ? t("profile.saving") : t("profile.saveChanges")}
                 </button>
               </div>
             </form>

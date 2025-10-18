@@ -13,6 +13,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import QRCode from "qrcode";
+import { useAppTranslation } from "../../hooks/useLanguage";
 
 type BidWithProduct = Bid & {
   products: Product;
@@ -20,6 +21,7 @@ type BidWithProduct = Bid & {
 
 export const Dashboard: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useAppTranslation();
   const [availableBids, setAvailableBids] = useState<Product[]>([]);
   const [appliedBids, setAppliedBids] = useState<BidWithProduct[]>([]);
   const [wonBids, setWonBids] = useState<BidWithProduct[]>([]);
@@ -221,7 +223,7 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-green-100 text-sm font-medium">
-                Available Auctions
+                {t("products.title")}
               </p>
               <p className="text-3xl font-bold mt-2">{availableBids.length}</p>
             </div>
@@ -233,7 +235,7 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-blue-100 text-sm font-medium">
-                My Active Bids
+                {t("dashboard.myBids")}
               </p>
               <p className="text-3xl font-bold mt-2">{appliedBids.length}</p>
             </div>
@@ -245,7 +247,7 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-yellow-100 text-sm font-medium">
-                Won Auctions
+                {t("dashboard.wonAuctions")}
               </p>
               <p className="text-3xl font-bold mt-2">{wonBids.length}</p>
             </div>
@@ -258,13 +260,13 @@ export const Dashboard: React.FC = () => {
         <div className="flex items-center gap-2 mb-6">
           <TrendingUp className="w-6 h-6 text-green-500" />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-200">
-            Active Auctions
+            {t("dashboard.activeAuctions")}
           </h2>
         </div>
 
         {availableBids.length === 0 ? (
           <p className="text-gray-500 dark:text-gray-400 text-center py-8 transition-colors duration-200">
-            No active auctions available
+            {t("dashboard.noActiveAuctions")}
           </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -290,7 +292,7 @@ export const Dashboard: React.FC = () => {
                   </h3>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600 dark:text-gray-400 transition-colors duration-200">
-                      Current Bid:
+                      {t("dashboard.currentBid")}:
                     </span>
                     <span className="font-bold text-green-600 transition-colors duration-200">
                       {formatPrice(product.current_price)}
@@ -299,7 +301,9 @@ export const Dashboard: React.FC = () => {
                   {product.end_time && (
                     <div className="flex items-center gap-1 mt-2 text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">
                       <Clock className="w-4 h-4" />
-                      <span>Ends: {formatDate(product.end_time)}</span>
+                      <span>
+                        {t("dashboard.ends")}: {formatDate(product.end_time)}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -313,13 +317,13 @@ export const Dashboard: React.FC = () => {
         <div className="flex items-center gap-2 mb-6">
           <Gavel className="w-6 h-6 text-blue-500" />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            My Bids
+            {t("dashboard.myBids")}
           </h2>
         </div>
 
         {appliedBids.length === 0 ? (
           <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-            You haven't placed any bids yet
+            {t("dashboard.noBidsYet")}
           </p>
         ) : (
           <div className="overflow-x-auto">
@@ -327,19 +331,19 @@ export const Dashboard: React.FC = () => {
               <thead className="bg-gray-50 dark:bg-gray-700 transition-colors duration-200">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider transition-colors duration-200">
-                    Product
+                    {t("dashboard.product")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider transition-colors duration-200">
-                    My Bid
+                    {t("dashboard.myBid")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider transition-colors duration-200">
-                    Current Price
+                    {t("dashboard.currentPrice")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider transition-colors duration-200">
-                    Status
+                    {t("dashboard.status")}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider transition-colors duration-200">
-                    Date
+                    {t("dashboard.date")}
                   </th>
                 </tr>
               </thead>
@@ -393,7 +397,7 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center gap-2 mb-6">
             <Award className="w-6 h-6 text-yellow-500" />
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Won Auctions
+              {t("dashboard.wonAuctions")}
             </h2>
           </div>
 
@@ -420,7 +424,7 @@ export const Dashboard: React.FC = () => {
                   </h3>
                   <div className="flex items-center justify-between text-sm mb-4">
                     <span className="text-gray-600 dark:text-gray-400">
-                      Winning Bid:
+                      {t("dashboard.winningBid")}:
                     </span>
                     <span className="font-bold text-yellow-600">
                       {formatPrice(bid.amount)}
@@ -432,34 +436,34 @@ export const Dashboard: React.FC = () => {
                     <div className="w-full space-y-2">
                       <div className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors duration-200">
                         <CheckCircle className="w-5 h-5" />
-                        Payment Completed
+                        {t("dashboard.paymentCompleted")}
                       </div>
                       {bid.payment_date && (
                         <p className="text-xs text-gray-500 dark:text-gray-400 text-center transition-colors duration-200">
-                          Paid on {formatDate(bid.payment_date)}
+                          {t("dashboard.paidOn")} {formatDate(bid.payment_date)}
                         </p>
                       )}
                     </div>
                   ) : bid.payment_status === "cancelled" ? (
                     <div className="w-full bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors duration-200">
                       <AlertCircle className="w-5 h-5" />
-                      Payment Cancelled
+                      {t("dashboard.paymentCancelled")}
                     </div>
                   ) : bid.payment_status === "pending" && bid.payment_phone ? (
                     <div className="w-full space-y-2">
                       <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors duration-200">
                         <Clock className="w-5 h-5" />
-                        Payment Verification Pending
+                        {t("dashboard.paymentPending")}
                       </div>
                       <p className="text-xs text-gray-500 dark:text-gray-400 text-center transition-colors duration-200">
-                        Admin is verifying your payment
+                        {t("dashboard.adminVerifying")}
                       </p>
                       <button
                         onClick={() => handlePayment(bid)}
                         className="w-full bg-gray-500 text-white py-1 text-sm rounded-lg font-medium hover:bg-gray-600 transition-colors duration-200 flex items-center justify-center gap-2"
                       >
                         <CreditCard className="w-4 h-4" />
-                        View Payment Details
+                        {t("dashboard.viewPaymentDetails")}
                       </button>
                     </div>
                   ) : (
@@ -468,7 +472,7 @@ export const Dashboard: React.FC = () => {
                       className="w-full bg-yellow-500 text-white py-2 rounded-lg font-semibold hover:bg-yellow-600 transition-colors duration-200 flex items-center justify-center gap-2"
                     >
                       <CreditCard className="w-5 h-5" />
-                      Pay Here
+                      {t("dashboard.payHere")}
                     </button>
                   )}
                 </div>
@@ -488,7 +492,7 @@ export const Dashboard: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <QrCode className="w-6 h-6 text-blue-500" />
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-200">
-                    Swish Payment
+                    {t("dashboard.swishPayment")}
                   </h2>
                 </div>
                 <button
@@ -506,7 +510,7 @@ export const Dashboard: React.FC = () => {
                 </h3>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600 dark:text-gray-400 transition-colors duration-200">
-                    Amount to pay:
+                    {t("dashboard.amountToPay")}:
                   </span>
                   <span className="text-2xl font-bold text-green-600 dark:text-green-400 transition-colors duration-200">
                     {formatPrice(selectedBid.amount)}
@@ -518,10 +522,10 @@ export const Dashboard: React.FC = () => {
               <div className="mb-6">
                 <div className="text-center mb-4">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 transition-colors duration-200">
-                    Scan with Swish App
+                    {t("dashboard.scanWithSwish")}
                   </h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-200">
-                    Open your Swish app and scan the QR code below
+                    {t("dashboard.openSwishApp")}
                   </p>
                 </div>
 
@@ -540,7 +544,7 @@ export const Dashboard: React.FC = () => {
                     <div className="text-center">
                       <QrCode className="w-12 h-12 text-gray-400 mx-auto mb-2" />
                       <p className="text-gray-500 dark:text-gray-400 transition-colors duration-200">
-                        Generating QR code...
+                        {t("dashboard.generatingQR")}
                       </p>
                     </div>
                   </div>
@@ -550,12 +554,12 @@ export const Dashboard: React.FC = () => {
               {/* Payment Info */}
               <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 transition-colors duration-200">
                 <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-2 transition-colors duration-200">
-                  Payment Details (Static - Will be updated)
+                  {t("dashboard.paymentDetails")}
                 </h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-blue-700 dark:text-blue-400 transition-colors duration-200">
-                      Recipient:
+                      {t("dashboard.recipient")}:
                     </span>
                     <span className="font-medium text-blue-900 dark:text-blue-300 transition-colors duration-200">
                       FYNDAK Auctions
@@ -563,7 +567,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-blue-700 dark:text-blue-400 transition-colors duration-200">
-                      Swish Number:
+                      {t("dashboard.swishNumber")}:
                     </span>
                     <span className="font-medium text-blue-900 dark:text-blue-300 transition-colors duration-200">
                       +46 764 459 662
@@ -571,7 +575,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-blue-700 dark:text-blue-400 transition-colors duration-200">
-                      Reference:
+                      {t("dashboard.reference")}:
                     </span>
                     <span className="font-medium text-blue-900 dark:text-blue-300 transition-colors duration-200">
                       FYNDAK-{selectedBid.id.slice(0, 8)}
@@ -579,7 +583,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-blue-700 dark:text-blue-400 transition-colors duration-200">
-                      Amount:
+                      {t("dashboard.amount")}:
                     </span>
                     <span className="font-medium text-blue-900 dark:text-blue-300 transition-colors duration-200">
                       {formatPrice(selectedBid.amount)}
@@ -591,19 +595,18 @@ export const Dashboard: React.FC = () => {
               {/* Instructions */}
               <div className="mb-6">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-3 transition-colors duration-200">
-                  Payment Process:
+                  {t("dashboard.paymentProcess")}:
                 </h4>
                 <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600 dark:text-gray-400 transition-colors duration-200">
-                  <li>Open the Swish app on your phone</li>
+                  <li>{t("dashboard.openSwishAppStep")}</li>
+                  <li>{t("dashboard.scanQRStep")}</li>
                   <li>
-                    Scan the QR code above or send manually to +46 764 459 662
+                    {t("dashboard.useReference")}
+                    {selectedBid.id.slice(0, 8)}
                   </li>
-                  <li>Use reference: FYNDAK-{selectedBid.id.slice(0, 8)}</li>
-                  <li>Complete the payment in your Swish app</li>
-                  <li>Enter your phone number below for verification</li>
-                  <li>
-                    Submit the form - Admin will verify and confirm payment
-                  </li>
+                  <li>{t("dashboard.completePayment")}</li>
+                  <li>{t("dashboard.enterPhoneNumber")}</li>
+                  <li>{t("dashboard.submitForm")}</li>
                 </ol>
               </div>
 
@@ -612,18 +615,16 @@ export const Dashboard: React.FC = () => {
                 <div className="space-y-4">
                   <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg transition-colors duration-200">
                     <h4 className="font-semibold text-yellow-800 dark:text-yellow-300 mb-2 transition-colors duration-200">
-                      After Payment Confirmation
+                      {t("dashboard.afterPaymentConfirmation")}
                     </h4>
                     <p className="text-sm text-yellow-700 dark:text-yellow-400 transition-colors duration-200">
-                      Once you've completed the Swish payment, please provide
-                      your phone number below so our admin can verify the
-                      payment.
+                      {t("dashboard.afterPaymentText")}
                     </p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200">
-                      Your Phone Number (used for Swish payment)
+                      {t("dashboard.yourPhoneNumber")}
                     </label>
                     <input
                       type="tel"
@@ -634,8 +635,7 @@ export const Dashboard: React.FC = () => {
                       disabled={paymentProcessing}
                     />
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 transition-colors duration-200">
-                      This helps our admin verify your payment in the Swish
-                      system
+                      {t("dashboard.phoneHelp")}
                     </p>
                   </div>
 
@@ -650,8 +650,8 @@ export const Dashboard: React.FC = () => {
                     >
                       <CheckCircle className="w-5 h-5" />
                       {paymentProcessing
-                        ? "Submitting..."
-                        : "Submit Payment Info"}
+                        ? t("dashboard.submitting")
+                        : t("dashboard.submitPaymentInfo")}
                     </button>
 
                     <button
@@ -659,7 +659,7 @@ export const Dashboard: React.FC = () => {
                       disabled={paymentProcessing}
                       className="px-6 bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 text-white py-3 rounded-lg font-semibold transition-colors duration-200"
                     >
-                      Cancel
+                      {t("cancel")}
                     </button>
                   </div>
                 </div>
@@ -670,19 +670,18 @@ export const Dashboard: React.FC = () => {
                     <div className="flex items-center gap-3 mb-3">
                       <Clock className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                       <h4 className="font-semibold text-blue-800 dark:text-blue-300 transition-colors duration-200">
-                        Payment Verification Pending
+                        {t("dashboard.paymentVerificationPending")}
                       </h4>
                     </div>
                     <div className="space-y-2 text-sm">
                       <p className="text-blue-700 dark:text-blue-400 transition-colors duration-200">
-                        Your payment information has been submitted and is
-                        awaiting admin verification.
+                        {t("dashboard.paymentInfoSubmitted")}
                       </p>
                       <div className="bg-white dark:bg-gray-800 p-3 rounded border border-blue-200 dark:border-blue-700">
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           <div>
                             <span className="text-gray-500 dark:text-gray-400">
-                              Amount:
+                              {t("dashboard.amount")}:
                             </span>
                             <span className="ml-2 font-semibold text-gray-900 dark:text-white">
                               {formatPrice(selectedBid.amount)}
@@ -690,7 +689,7 @@ export const Dashboard: React.FC = () => {
                           </div>
                           <div>
                             <span className="text-gray-500 dark:text-gray-400">
-                              Reference:
+                              {t("dashboard.reference")}:
                             </span>
                             <span className="ml-2 font-mono text-gray-900 dark:text-white">
                               FYNDAK-{selectedBid.id.slice(0, 8)}
@@ -698,7 +697,7 @@ export const Dashboard: React.FC = () => {
                           </div>
                           <div>
                             <span className="text-gray-500 dark:text-gray-400">
-                              Swish Number:
+                              {t("dashboard.swishNumber")}:
                             </span>
                             <span className="ml-2 font-mono text-gray-900 dark:text-white">
                               +46 764 459 662
@@ -706,16 +705,18 @@ export const Dashboard: React.FC = () => {
                           </div>
                           <div>
                             <span className="text-gray-500 dark:text-gray-400">
-                              Your Phone:
+                              {t("dashboard.yourPhoneNumber")}:
                             </span>
                             <span className="ml-2 font-mono text-gray-900 dark:text-white">
-                              {userPhoneNumber || "Not provided"}
+                              {userPhoneNumber || t("dashboard.notProvided")}
                             </span>
                           </div>
                         </div>
                       </div>
                       <p className="text-blue-600 dark:text-blue-500 transition-colors duration-200">
-                        <strong>Status:</strong> Pending Admin Verification
+                        <strong>
+                          {t("dashboard.statusPendingVerification")}
+                        </strong>
                       </p>
                     </div>
                   </div>
@@ -724,7 +725,7 @@ export const Dashboard: React.FC = () => {
                   {selectedBid.payment_status === "pending" && (
                     <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                       <p className="text-sm text-yellow-700 dark:text-yellow-400 mb-2">
-                        Need to update your phone number?
+                        {t("dashboard.updatePhoneNumber")}
                       </p>
                       <div className="flex gap-2">
                         <input
@@ -744,7 +745,9 @@ export const Dashboard: React.FC = () => {
                           }
                           className="px-3 py-1 text-sm bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-300 text-white rounded font-medium transition-colors duration-200"
                         >
-                          {paymentProcessing ? "Updating..." : "Update"}
+                          {paymentProcessing
+                            ? t("dashboard.updating")
+                            : t("dashboard.update")}
                         </button>
                       </div>
                     </div>
@@ -754,7 +757,7 @@ export const Dashboard: React.FC = () => {
                     onClick={closePaymentModal}
                     className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition-colors duration-200"
                   >
-                    Close
+                    {t("dashboard.close")}
                   </button>
                 </div>
               )}

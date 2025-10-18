@@ -9,8 +9,6 @@ import {
   Sun,
   Moon,
   Info,
-  Banknote,
-  MapPin,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -31,7 +29,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const publicNavItems = [
     { id: "home", path: "/", label: t("home"), icon: Home },
     { id: "about", path: "/about", label: t("about"), icon: Info },
-    { id: "map", path: "/map", label: t("map"), icon: MapPin },
   ];
 
   const authenticatedNavItems = [
@@ -44,8 +41,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       icon: Package,
     },
     { id: "about", path: "/about", label: t("about"), icon: Info },
-    { id: "sell", path: "/sell", label: t("sell"), icon: Banknote },
-    { id: "map", path: "/map", label: t("map"), icon: MapPin },
   ];
 
   // Add admin link if user is admin

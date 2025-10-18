@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase, Product, Profile, Bid } from "../../lib/supabase";
 import { useAuth } from "../../contexts/AuthContext";
+import { useAppTranslation } from "../../hooks/useLanguage";
 import {
   Plus,
   Edit2,
@@ -17,6 +18,7 @@ interface BidWithProfile extends Bid {
 
 export const AdminPanel: React.FC = () => {
   const { profile } = useAuth();
+  const { t } = useAppTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -123,13 +125,13 @@ export const AdminPanel: React.FC = () => {
         await fetchBidders(selectedProduct.id);
       }
 
-      setSuccess(`Bid status updated successfully!`);
+      setSuccess(t("admin.bidStatusUpdated"));
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(""), 3000);
     } catch (err: unknown) {
       setError(
-        err instanceof Error ? err.message : "Failed to update bid status"
+        err instanceof Error ? err.message : t("admin.failedToUpdateBidStatus")
       );
       setTimeout(() => setError(""), 5000);
     }
@@ -327,7 +329,7 @@ export const AdminPanel: React.FC = () => {
           imageUrl = await uploadImage(selectedFile);
         } catch (error) {
           console.error("Image upload error:", error);
-          setError("Failed to upload image. Please try again.");
+          setError(t("admin.failedToUploadImage"));
           return;
         }
       }
@@ -364,20 +366,22 @@ export const AdminPanel: React.FC = () => {
           .eq("id", editingProduct.id);
 
         if (updateError) throw updateError;
-        setSuccess("Product updated successfully!");
+        setSuccess(t("admin.productUpdated"));
       } else {
         const { error: insertError } = await supabase
           .from("products")
           .insert([productData]);
 
         if (insertError) throw insertError;
-        setSuccess("Product created successfully!");
+        setSuccess(t("admin.productCreated"));
       }
 
       fetchProducts();
       handleCloseModal();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to save product");
+      setError(
+        err instanceof Error ? err.message : t("admin.failedToSaveProduct")
+      );
     }
   };
 
@@ -477,7 +481,7 @@ export const AdminPanel: React.FC = () => {
         );
       }
 
-      setSuccess("Auction ended successfully!");
+      setSuccess(t("admin.auctionEnded"));
       fetchProducts();
     } catch (err: unknown) {
       console.error("Error ending auction:", err);
@@ -545,10 +549,10 @@ export const AdminPanel: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-200">
-            Admin Panel
+            {t("admin.title")}
           </h1>
           <p className="text-gray-600 dark:text-gray-300 transition-colors duration-200">
-            Manage products and auctions
+            {t("admin.manageProducts")}
           </p>
         </div>
         <button
@@ -556,7 +560,7 @@ export const AdminPanel: React.FC = () => {
           className="flex items-center gap-2 px-4 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200"
         >
           <Plus className="w-5 h-5" />
-          Add Product
+          {t("admin.addProduct")}
         </button>
       </div>
 
@@ -578,22 +582,22 @@ export const AdminPanel: React.FC = () => {
             <thead className="bg-gray-50 dark:bg-gray-700 transition-colors duration-200">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors duration-200">
-                  Product
+                  {t("admin.productName")}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors duration-200">
-                  Starting Price
+                  {t("admin.startingPrice")}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors duration-200">
-                  Current Price
+                  {t("admin.currentPrice")}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors duration-200">
-                  Status
+                  {t("admin.status")}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors duration-200">
-                  End Time
+                  {t("admin.endTime")}
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors duration-200">
-                  Actions
+                  {t("admin.actions")}
                 </th>
               </tr>
             </thead>
@@ -646,7 +650,11 @@ export const AdminPanel: React.FC = () => {
                           : "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100"
                       }`}
                     >
-                      {product.status}
+                      {product.status === "active"
+                        ? t("admin.statusActive")
+                        : product.status === "ended"
+                        ? t("admin.statusEnded")
+                        : product.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 transition-colors duration-200">
@@ -657,14 +665,14 @@ export const AdminPanel: React.FC = () => {
                       <button
                         onClick={() => handleShowBidders(product)}
                         className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
-                        title="View Bidders"
+                        title={t("admin.viewBidders")}
                       >
                         <Users className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleOpenModal(product)}
                         className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200"
-                        title="Edit"
+                        title={t("admin.editProduct")}
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
@@ -672,7 +680,7 @@ export const AdminPanel: React.FC = () => {
                         <button
                           onClick={() => handleEndAuction(product.id)}
                           className="p-2 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-all duration-200"
-                          title="End Auction"
+                          title={t("admin.endAuction")}
                         >
                           <CheckCircle className="w-4 h-4" />
                         </button>
@@ -680,7 +688,7 @@ export const AdminPanel: React.FC = () => {
                       <button
                         onClick={() => handleDeleteProduct(product.id)}
                         className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
-                        title="Delete"
+                        title={t("admin.deleteProduct")}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -697,7 +705,9 @@ export const AdminPanel: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto transition-colors duration-200">
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 transition-colors duration-200">
-              {editingProduct ? "Edit Product" : "Add New Product"}
+              {editingProduct
+                ? t("admin.editProduct")
+                : t("admin.addNewProduct")}
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -706,7 +716,7 @@ export const AdminPanel: React.FC = () => {
                   htmlFor="name"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
                 >
-                  Product Name
+                  {t("admin.productName")}
                 </label>
                 <input
                   id="name"
@@ -717,7 +727,7 @@ export const AdminPanel: React.FC = () => {
                   }
                   required
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Enter product name"
+                  placeholder={t("admin.productNamePlaceholder")}
                 />
               </div>
 
@@ -726,7 +736,7 @@ export const AdminPanel: React.FC = () => {
                   htmlFor="description"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
                 >
-                  Description
+                  {t("admin.description")}
                 </label>
                 <textarea
                   id="description"
@@ -736,7 +746,7 @@ export const AdminPanel: React.FC = () => {
                   }
                   rows={4}
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 resize-none"
-                  placeholder="Enter product description"
+                  placeholder={t("admin.descriptionPlaceholder")}
                 />
               </div>
 
@@ -747,7 +757,7 @@ export const AdminPanel: React.FC = () => {
                     htmlFor="category"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
                   >
-                    Category
+                    {t("admin.category")}
                   </label>
                   <select
                     id="category"
@@ -757,17 +767,27 @@ export const AdminPanel: React.FC = () => {
                     }
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
                   >
-                    <option value="">Select Category</option>
-                    <option value="Home & Garden">Home & Garden</option>
-                    <option value="Collectibles">Collectibles</option>
-                    <option value="Fashion">Fashion</option>
-                    <option value="Crafts">Crafts</option>
-                    <option value="Electronics">Electronics</option>
-                    <option value="Art">Art</option>
-                    <option value="Jewelry">Jewelry</option>
-                    <option value="Books">Books</option>
-                    <option value="Sports">Sports</option>
-                    <option value="Other">Other</option>
+                    <option value="">{t("admin.selectCategory")}</option>
+                    <option value="Home & Garden">
+                      {t("admin.categoryHomeGarden")}
+                    </option>
+                    <option value="Collectibles">
+                      {t("admin.categoryCollectibles")}
+                    </option>
+                    <option value="Fashion">
+                      {t("admin.categoryFashion")}
+                    </option>
+                    <option value="Crafts">{t("admin.categoryCrafts")}</option>
+                    <option value="Electronics">
+                      {t("admin.categoryElectronics")}
+                    </option>
+                    <option value="Art">{t("admin.categoryArt")}</option>
+                    <option value="Jewelry">
+                      {t("admin.categoryJewelry")}
+                    </option>
+                    <option value="Books">{t("admin.categoryBooks")}</option>
+                    <option value="Sports">{t("admin.categorySports")}</option>
+                    <option value="Other">{t("admin.categoryOther")}</option>
                   </select>
                 </div>
 
@@ -776,7 +796,7 @@ export const AdminPanel: React.FC = () => {
                     htmlFor="location"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
                   >
-                    Location
+                    {t("admin.location")}
                   </label>
                   <select
                     id="location"
@@ -786,17 +806,31 @@ export const AdminPanel: React.FC = () => {
                     }
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
                   >
-                    <option value="">Select Location</option>
-                    <option value="Stockholm, Sweden">Stockholm, Sweden</option>
-                    <option value="Göteborg, Sweden">Göteborg, Sweden</option>
-                    <option value="Malmö, Sweden">Malmö, Sweden</option>
-                    <option value="Uppsala, Sweden">Uppsala, Sweden</option>
-                    <option value="Linköping, Sweden">Linköping, Sweden</option>
-                    <option value="Örebro, Sweden">Örebro, Sweden</option>
-                    <option value="Helsingborg, Sweden">
-                      Helsingborg, Sweden
+                    <option value="">{t("admin.selectLocation")}</option>
+                    <option value="Stockholm, Sweden">
+                      {t("admin.locationStockholm")}
                     </option>
-                    <option value="Jönköping, Sweden">Jönköping, Sweden</option>
+                    <option value="Göteborg, Sweden">
+                      {t("admin.locationGoteborg")}
+                    </option>
+                    <option value="Malmö, Sweden">
+                      {t("admin.locationMalmo")}
+                    </option>
+                    <option value="Uppsala, Sweden">
+                      {t("admin.locationUppsala")}
+                    </option>
+                    <option value="Linköping, Sweden">
+                      {t("admin.locationLinkoping")}
+                    </option>
+                    <option value="Örebro, Sweden">
+                      {t("admin.locationOrebro")}
+                    </option>
+                    <option value="Helsingborg, Sweden">
+                      {t("admin.locationHelsingborg")}
+                    </option>
+                    <option value="Jönköping, Sweden">
+                      {t("admin.locationJonkoping")}
+                    </option>
                   </select>
                 </div>
 
@@ -805,7 +839,7 @@ export const AdminPanel: React.FC = () => {
                     htmlFor="condition"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
                   >
-                    Condition
+                    {t("admin.condition")}
                   </label>
                   <select
                     id="condition"
@@ -815,21 +849,27 @@ export const AdminPanel: React.FC = () => {
                     }
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
                   >
-                    <option value="">Select Condition</option>
-                    <option value="New">New</option>
-                    <option value="Like New">Like New</option>
-                    <option value="Excellent">Excellent</option>
-                    <option value="Very Good">Very Good</option>
-                    <option value="Good">Good</option>
-                    <option value="Fair">Fair</option>
-                    <option value="Poor">Poor</option>
+                    <option value="">{t("admin.selectCondition")}</option>
+                    <option value="New">{t("admin.conditionNew")}</option>
+                    <option value="Like New">
+                      {t("admin.conditionLikeNew")}
+                    </option>
+                    <option value="Excellent">
+                      {t("admin.conditionExcellent")}
+                    </option>
+                    <option value="Very Good">
+                      {t("admin.conditionVeryGood")}
+                    </option>
+                    <option value="Good">{t("admin.conditionGood")}</option>
+                    <option value="Fair">{t("admin.conditionFair")}</option>
+                    <option value="Poor">{t("admin.conditionPoor")}</option>
                   </select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200">
-                  Product Image
+                  {t("admin.productImage")}
                 </label>
 
                 {/* File Upload Button */}
@@ -846,7 +886,7 @@ export const AdminPanel: React.FC = () => {
                     className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg cursor-pointer transition-colors duration-200"
                   >
                     <Upload className="h-4 w-4 mr-2" />
-                    Choose Image
+                    {t("admin.chooseImage")}
                   </label>
                 </div>
 
@@ -859,7 +899,7 @@ export const AdminPanel: React.FC = () => {
                       setFormData({ ...formData, image_url: e.target.value })
                     }
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-                    placeholder="Or paste image URL"
+                    placeholder={t("admin.imageUrlPlaceholder")}
                   />
                 </div>
 
@@ -889,7 +929,7 @@ export const AdminPanel: React.FC = () => {
                   <div className="mb-4">
                     <div className="flex items-center mb-2">
                       <span className="text-sm text-gray-600 dark:text-gray-400">
-                        Uploading... {uploadProgress}%
+                        {t("admin.uploadProgress")} {uploadProgress}%
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -908,7 +948,7 @@ export const AdminPanel: React.FC = () => {
                     htmlFor="starting_price"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
                   >
-                    Starting Price (SEK)
+                    {t("admin.startingPrice")} (SEK)
                   </label>
                   <input
                     id="starting_price"
@@ -933,7 +973,7 @@ export const AdminPanel: React.FC = () => {
                     htmlFor="end_time"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200"
                   >
-                    End Time
+                    {t("admin.endTime")}
                   </label>
                   <input
                     id="end_time"
@@ -953,13 +993,15 @@ export const AdminPanel: React.FC = () => {
                   onClick={handleCloseModal}
                   className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
                 >
-                  Cancel
+                  {t("admin.cancel")}
                 </button>
                 <button
                   type="submit"
                   className="flex-1 bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition"
                 >
-                  {editingProduct ? "Update Product" : "Create Product"}
+                  {editingProduct
+                    ? t("admin.updateProduct")
+                    : t("admin.createProduct")}
                 </button>
               </div>
             </form>
@@ -971,13 +1013,15 @@ export const AdminPanel: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto transition-colors duration-200">
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-200">
-              Bidders for {selectedProduct.name}
+              {t("admin.biddersFor")} {selectedProduct.name}
             </h3>
 
             {/* Auction Status Indicator */}
             <div className="mb-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-700 transition-colors duration-200">
               <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                <span className="font-semibold">Auction Status:</span>{" "}
+                <span className="font-semibold">
+                  {t("admin.auctionStatus")}:
+                </span>{" "}
                 <span
                   className={`font-bold uppercase ${
                     selectedProduct.status === "ended"
@@ -985,7 +1029,9 @@ export const AdminPanel: React.FC = () => {
                       : "text-green-600 dark:text-green-400"
                   }`}
                 >
-                  {selectedProduct.status}
+                  {selectedProduct.status === "ended"
+                    ? t("admin.statusEnded")
+                    : t("admin.statusActive")}
                 </span>
               </p>
 
@@ -993,25 +1039,20 @@ export const AdminPanel: React.FC = () => {
               {selectedProduct.status === "ended" && (
                 <div className="p-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded text-xs">
                   <p className="font-semibold text-blue-800 dark:text-blue-300 mb-1">
-                    💡 Payment Verification Guide:
+                    💡 {t("admin.paymentVerificationGuide")}:
                   </p>
                   <ul className="text-blue-700 dark:text-blue-400 space-y-1">
-                    <li>
-                      • Look for yellow alerts showing user's Swish phone number
-                    </li>
-                    <li>
-                      • Check your Swish app for payments from that number
-                    </li>
-                    <li>• Verify amount matches the winning bid</li>
-                    <li>• Update payment status to "Paid" or "Cancelled"</li>
+                    <li>• {t("admin.paymentVerificationStep1")}</li>
+                    <li>• {t("admin.paymentVerificationStep2")}</li>
+                    <li>• {t("admin.paymentVerificationStep3")}</li>
+                    <li>• {t("admin.paymentVerificationStep4")}</li>
                   </ul>
                 </div>
               )}
 
               {selectedProduct.status === "active" && (
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Orange alerts indicate users have submitted payment info (end
-                  auction to process payments)
+                  {t("admin.activeAuctionNote")}
                 </p>
               )}
             </div>
@@ -1034,7 +1075,7 @@ export const AdminPanel: React.FC = () => {
 
             {bidders.length === 0 ? (
               <p className="text-gray-600 dark:text-gray-300 transition-colors duration-200">
-                No bidders for this product yet.
+                {t("admin.noBidders")}
               </p>
             ) : (
               <ul className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -1063,7 +1104,7 @@ export const AdminPanel: React.FC = () => {
                               <div className="flex items-center gap-1 mb-1">
                                 <CheckCircle className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
                                 <span className="text-xs font-bold text-yellow-700 dark:text-yellow-400 uppercase tracking-wide">
-                                  WINNER
+                                  {t("admin.winner")}
                                 </span>
                               </div>
                             )}
@@ -1071,7 +1112,7 @@ export const AdminPanel: React.FC = () => {
                               <div className="flex items-center gap-1 mb-1">
                                 <Package className="w-4 h-4 text-green-600 dark:text-green-400" />
                                 <span className="text-xs font-bold text-green-700 dark:text-green-400 uppercase tracking-wide">
-                                  LEADING BID
+                                  {t("admin.leadingBid")}
                                 </span>
                               </div>
                             )}
@@ -1129,9 +1170,15 @@ export const AdminPanel: React.FC = () => {
                                 }
                                 className="text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200"
                               >
-                                <option value="active">Active</option>
-                                <option value="outbid">Outbid</option>
-                                <option value="won">Won</option>
+                                <option value="active">
+                                  {t("admin.statusActive")}
+                                </option>
+                                <option value="outbid">
+                                  {t("admin.statusOutbid")}
+                                </option>
+                                <option value="won">
+                                  {t("admin.statusWon")}
+                                </option>
                               </select>
 
                               {bid.status === "won" && (
@@ -1142,18 +1189,20 @@ export const AdminPanel: React.FC = () => {
                                       <div className="p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded text-xs">
                                         <div className="flex items-center gap-1 mb-1">
                                           <span className="text-yellow-600 dark:text-yellow-400 font-semibold">
-                                            ⚠️ PAYMENT VERIFICATION NEEDED
+                                            ⚠️{" "}
+                                            {t(
+                                              "admin.paymentVerificationNeeded"
+                                            )}
                                           </span>
                                         </div>
                                         <p className="text-yellow-700 dark:text-yellow-300 mb-1">
-                                          User sent payment from:
+                                          {t("admin.userSentPaymentFrom")}:
                                         </p>
                                         <p className="font-mono font-bold text-yellow-800 dark:text-yellow-200 bg-yellow-100 dark:bg-yellow-800/30 px-2 py-1 rounded">
                                           📱 {bid.payment_phone}
                                         </p>
                                         <p className="text-yellow-600 dark:text-yellow-400 mt-1">
-                                          Please verify in Swish and update
-                                          status below.
+                                          {t("admin.verifyInSwish")}
                                         </p>
                                       </div>
                                     )}
@@ -1175,11 +1224,13 @@ export const AdminPanel: React.FC = () => {
                                     }`}
                                   >
                                     <option value="pending">
-                                      Payment Pending
+                                      {t("admin.paymentPending")}
                                     </option>
-                                    <option value="paid">Payment Paid</option>
+                                    <option value="paid">
+                                      {t("admin.paymentPaid")}
+                                    </option>
                                     <option value="cancelled">
-                                      Payment Cancelled
+                                      {t("admin.paymentCancelled")}
                                     </option>
                                   </select>
 
@@ -1187,7 +1238,7 @@ export const AdminPanel: React.FC = () => {
                                     bid.payment_status !== "pending" && (
                                       <div className="flex items-center gap-1">
                                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                                          Paid from:
+                                          {t("admin.paidFrom")}:
                                         </span>
                                         <span className="text-xs font-mono text-blue-600 dark:text-blue-400">
                                           📱 {bid.payment_phone}
@@ -1210,7 +1261,14 @@ export const AdminPanel: React.FC = () => {
                                       : "text-gray-500 dark:text-gray-400"
                                   }`}
                                 >
-                                  Status: {bid.status.toUpperCase()}
+                                  Status:{" "}
+                                  {bid.status === "won"
+                                    ? t("admin.statusWon")
+                                    : bid.status === "active"
+                                    ? t("admin.statusActive")
+                                    : bid.status === "outbid"
+                                    ? t("admin.statusOutbid")
+                                    : bid.status.toUpperCase()}
                                 </p>
                               )}
                               {bid.payment_status && bid.status === "won" && (
@@ -1238,12 +1296,16 @@ export const AdminPanel: React.FC = () => {
                                     <div className="space-y-1">
                                       <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">
                                         Payment:{" "}
-                                        {bid.payment_status.toUpperCase()}
+                                        {bid.payment_status === "paid"
+                                          ? t("admin.paymentPaid")
+                                          : bid.payment_status === "cancelled"
+                                          ? t("admin.paymentCancelled")
+                                          : t("admin.paymentPending")}
                                       </p>
                                       {bid.payment_phone && (
                                         <div className="flex items-center gap-1">
                                           <span className="text-xs text-gray-500 dark:text-gray-400">
-                                            From:
+                                            {t("admin.from")}:
                                           </span>
                                           <span className="text-xs font-mono text-blue-600 dark:text-blue-400">
                                             📱 {bid.payment_phone}
@@ -1269,7 +1331,7 @@ export const AdminPanel: React.FC = () => {
                 onClick={handleCloseBidders}
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
               >
-                Close
+                {t("admin.close")}
               </button>
             </div>
           </div>
