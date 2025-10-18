@@ -54,6 +54,9 @@ export const AdminPanel: React.FC = () => {
     condition: "",
   });
 
+  const [locationDetecting, setLocationDetecting] = useState(false);
+  const [locationError, setLocationError] = useState("");
+
   useEffect(() => {
     if (profile?.is_admin) {
       fetchProducts();
@@ -503,6 +506,125 @@ export const AdminPanel: React.FC = () => {
     }
   };
 
+  const detectLocation = async () => {
+    setLocationDetecting(true);
+    setLocationError("");
+
+    if (!navigator.geolocation) {
+      setLocationError(t("admin.geolocationNotSupported"));
+      setLocationDetecting(false);
+      return;
+    }
+
+    try {
+      const position = await new Promise<GeolocationPosition>(
+        (resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 300000, // 5 minutes
+          });
+        }
+      );
+
+      const { latitude, longitude } = position.coords;
+
+      // Use OpenStreetMap Nominatim for reverse geocoding (free service)
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=en`
+      );
+
+      if (!response.ok) {
+        throw new Error("Geocoding request failed");
+      }
+
+      const data = await response.json();
+
+      // Extract city name from the response
+      const city =
+        data.address?.city ||
+        data.address?.town ||
+        data.address?.village ||
+        data.address?.municipality ||
+        data.address?.county;
+
+      const country = data.address?.country;
+
+      if (city && country) {
+        // Check if the detected city matches one of our predefined locations
+        const detectedLocation = `${city}, ${country}`;
+        const predefinedLocations = [
+          "Stockholm, Sweden",
+          "Göteborg, Sweden",
+          "Malmö, Sweden",
+          "Uppsala, Sweden",
+          "Linköping, Sweden",
+          "Örebro, Sweden",
+          "Helsingborg, Sweden",
+          "Jönköping, Sweden",
+          "Karlskrona, Sweden",
+        ];
+
+        // Create a mapping for common city name variations to use preferred formatting
+        const cityMapping: { [key: string]: string } = {
+          stockholm: "Stockholm, Sweden",
+          göteborg: "Göteborg, Sweden",
+          gothenburg: "Göteborg, Sweden",
+          malmö: "Malmö, Sweden",
+          malmo: "Malmö, Sweden",
+          uppsala: "Uppsala, Sweden",
+          linköping: "Linköping, Sweden",
+          linkoping: "Linköping, Sweden",
+          örebro: "Örebro, Sweden",
+          orebro: "Örebro, Sweden",
+          helsingborg: "Helsingborg, Sweden",
+          jönköping: "Jönköping, Sweden",
+          jonkoping: "Jönköping, Sweden",
+          karlskrona: "Karlskrona, Sweden",
+        };
+
+        // Try to find preferred formatting first, otherwise use detected location as-is
+        const cityLower = city.toLowerCase();
+        const finalLocation =
+          cityMapping[cityLower] ||
+          predefinedLocations.find((loc) =>
+            loc.toLowerCase().includes(cityLower)
+          ) ||
+          detectedLocation; // Always use detected location if no match found
+
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          location: finalLocation,
+        }));
+        setLocationError("");
+      } else {
+        setLocationError(t("admin.couldNotDetectCity"));
+      }
+    } catch (error) {
+      console.error("Location detection error:", error);
+      if (error instanceof GeolocationPositionError) {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setLocationError(t("admin.locationPermissionDenied"));
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setLocationError(t("admin.locationUnavailable"));
+            break;
+          case error.TIMEOUT:
+            setLocationError(t("admin.locationTimeout"));
+            break;
+          default:
+            setLocationError(t("admin.locationError"));
+            break;
+        }
+      } else {
+        setLocationError(t("admin.locationError"));
+      }
+    } finally {
+      setLocationDetecting(false);
+    }
+  };
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("sv-SE", {
       style: "currency",
@@ -798,40 +920,111 @@ export const AdminPanel: React.FC = () => {
                   >
                     {t("admin.location")}
                   </label>
-                  <select
-                    id="location"
-                    value={formData.location}
-                    onChange={(e) =>
-                      setFormData({ ...formData, location: e.target.value })
-                    }
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                  >
-                    <option value="">{t("admin.selectLocation")}</option>
-                    <option value="Stockholm, Sweden">
-                      {t("admin.locationStockholm")}
-                    </option>
-                    <option value="Göteborg, Sweden">
-                      {t("admin.locationGoteborg")}
-                    </option>
-                    <option value="Malmö, Sweden">
-                      {t("admin.locationMalmo")}
-                    </option>
-                    <option value="Uppsala, Sweden">
-                      {t("admin.locationUppsala")}
-                    </option>
-                    <option value="Linköping, Sweden">
-                      {t("admin.locationLinkoping")}
-                    </option>
-                    <option value="Örebro, Sweden">
-                      {t("admin.locationOrebro")}
-                    </option>
-                    <option value="Helsingborg, Sweden">
-                      {t("admin.locationHelsingborg")}
-                    </option>
-                    <option value="Jönköping, Sweden">
-                      {t("admin.locationJonkoping")}
-                    </option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      id="location"
+                      value={formData.location}
+                      onChange={(e) => {
+                        if (e.target.value === "detect-location") {
+                          // Reset to empty so the dropdown doesn't stay on "detect-location"
+                          setFormData({ ...formData, location: "" });
+                          detectLocation();
+                        } else if (e.target.value === "custom-location") {
+                          // Switch to text input mode
+                          setFormData({ ...formData, location: "" });
+                        } else {
+                          setFormData({
+                            ...formData,
+                            location: e.target.value,
+                          });
+                        }
+                      }}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                      disabled={locationDetecting}
+                    >
+                      <option value="">{t("admin.selectLocation")}</option>
+                      <option
+                        value="detect-location"
+                        style={{ color: "#10B981", fontWeight: "500" }}
+                      >
+                        📍{" "}
+                        {locationDetecting
+                          ? t("admin.detectingLocation")
+                          : t("admin.detectLocation")}
+                      </option>
+                      <option disabled style={{ color: "#9CA3AF" }}>
+                        ──────────────
+                      </option>
+                      <option value="Stockholm, Sweden">
+                        {t("admin.locationStockholm")}
+                      </option>
+                      <option value="Göteborg, Sweden">
+                        {t("admin.locationGoteborg")}
+                      </option>
+                      <option value="Malmö, Sweden">
+                        {t("admin.locationMalmo")}
+                      </option>
+                      <option value="Uppsala, Sweden">
+                        {t("admin.locationUppsala")}
+                      </option>
+                      <option value="Linköping, Sweden">
+                        {t("admin.locationLinkoping")}
+                      </option>
+                      <option value="Örebro, Sweden">
+                        {t("admin.locationOrebro")}
+                      </option>
+                      <option value="Helsingborg, Sweden">
+                        {t("admin.locationHelsingborg")}
+                      </option>
+                      <option value="Jönköping, Sweden">
+                        {t("admin.locationJonkoping")}
+                      </option>
+                      <option value="Karlskrona, Sweden">
+                        {t("admin.locationKarlskrona")}
+                      </option>
+                      <option disabled style={{ color: "#9CA3AF" }}>
+                        ──────────────
+                      </option>
+                      <option
+                        value="custom-location"
+                        style={{ color: "#6366F1", fontWeight: "500" }}
+                      >
+                        ✏️ {t("admin.enterCustomLocation")}
+                      </option>
+                    </select>
+
+                    {/* Show text input if location is not in predefined list or custom option selected */}
+                    {formData.location &&
+                      ![
+                        "Stockholm, Sweden",
+                        "Göteborg, Sweden",
+                        "Malmö, Sweden",
+                        "Uppsala, Sweden",
+                        "Linköping, Sweden",
+                        "Örebro, Sweden",
+                        "Helsingborg, Sweden",
+                        "Jönköping, Sweden",
+                        "Karlskrona, Sweden",
+                      ].includes(formData.location) && (
+                        <input
+                          type="text"
+                          value={formData.location}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              location: e.target.value,
+                            })
+                          }
+                          placeholder={t("admin.enterLocation")}
+                          className="mt-2 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                        />
+                      )}
+                  </div>
+                  {locationError && (
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                      {locationError}
+                    </p>
+                  )}
                 </div>
 
                 <div>

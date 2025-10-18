@@ -112,3 +112,4 @@ temp/
 # Miscellaneous
 *.tar.gz
 FYNDAK_Feature_Implementation_Report.md
+supabase/migrations/20241019000000_add_bid_price_update_trigger.sql

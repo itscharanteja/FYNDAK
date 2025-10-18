@@ -1,5 +1,5 @@
 import React from "react";
-import { Info } from "lucide-react";
+import { Info, Facebook, Instagram, Play } from "lucide-react";
 
 export const AboutPage: React.FC = () => {
   return (
@@ -42,6 +42,74 @@ export const AboutPage: React.FC = () => {
                 <li>✓ 24/7 customer support</li>
                 <li>✓ Verified sellers and buyers</li>
               </ul>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8">
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6 text-center">
+              Contact Information
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    Address
+                  </h3>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    Kummelvägen 2, 37161
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    Phone
+                  </h3>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    0455-210 55
+                  </p>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  Service Areas
+                </h3>
+                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                  Olofström • Karlskrona • Karlshamn • Kalmar • Kristianstad •
+                  Sölvesborg • Tingsryd • Ronneby • Växjö, Sweden
+                </p>
+              </div>
+            </div>
+
+            {/* Social Media Section */}
+            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4 text-center">
+                Follow Us
+              </h3>
+              <div className="flex justify-center space-x-6">
+                <a
+                  href="https://www.facebook.com/share/1BWKCsbGW2/?mibextid=wwXIfr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  aria-label="Follow us on Facebook"
+                >
+                  <Facebook className="w-6 h-6" />
+                </a>
+                <div
+                  className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 hover:from-purple-700 hover:via-pink-700 hover:to-orange-600 text-white rounded-full transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer"
+                  aria-label="Follow us on Instagram (Coming Soon)"
+                >
+                  <Instagram className="w-6 h-6" />
+                </div>
+                <div
+                  className="flex items-center justify-center w-12 h-12 bg-black hover:bg-gray-800 text-white rounded-full transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer"
+                  aria-label="Follow us on TikTok (Coming Soon)"
+                >
+                  <Play className="w-6 h-6" />
+                </div>
+              </div>
+              <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-3">
+                Follow us for the latest updates and exclusive auction previews
+              </p>
             </div>
           </div>
 

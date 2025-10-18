@@ -174,6 +174,7 @@ const swedishTranslations = {
   "products.bidPlacedSuccess": "Bud lagt framgångsrikt!",
   "products.failedToPlaceBid": "Misslyckades att lägga bud",
   "products.placingBid": "Lägger bud...",
+  "products.auctionEnded": "Denna auktion har avslutats",
   "products.noEndDate": "Inget slutdatum",
 
   // About Page
@@ -252,6 +253,17 @@ const swedishTranslations = {
   "admin.locationOrebro": "Örebro, Sverige",
   "admin.locationHelsingborg": "Helsingborg, Sverige",
   "admin.locationJonkoping": "Jönköping, Sverige",
+  "admin.locationKarlskrona": "Karlskrona, Sverige",
+  "admin.detectLocation": "Upptäck min plats",
+  "admin.detectingLocation": "Upptäcker plats...",
+  "admin.enterCustomLocation": "Ange anpassad plats",
+  "admin.geolocationNotSupported":
+    "Platsbedömning stöds inte av din webbläsare",
+  "admin.couldNotDetectCity": "Kunde inte upptäcka din stad",
+  "admin.locationPermissionDenied": "Platstillstånd nekades",
+  "admin.locationUnavailable": "Plats ej tillgänglig",
+  "admin.locationTimeout": "Platsbedömning tog för lång tid",
+  "admin.locationError": "Fel vid platsbedömning",
   "admin.selectCondition": "Välj skick",
   "admin.conditionNew": "Ny",
   "admin.conditionLikeNew": "Som ny",
@@ -529,6 +541,7 @@ const englishTranslations = {
   "products.bidPlacedSuccess": "Bid placed successfully!",
   "products.failedToPlaceBid": "Failed to place bid",
   "products.placingBid": "Placing Bid...",
+  "products.auctionEnded": "This auction has ended",
   "products.noEndDate": "No end date",
 
   // About Page
@@ -607,6 +620,17 @@ const englishTranslations = {
   "admin.locationOrebro": "Örebro, Sweden",
   "admin.locationHelsingborg": "Helsingborg, Sweden",
   "admin.locationJonkoping": "Jönköping, Sweden",
+  "admin.locationKarlskrona": "Karlskrona, Sweden",
+  "admin.detectLocation": "Detect my location",
+  "admin.detectingLocation": "Detecting location...",
+  "admin.enterCustomLocation": "Enter custom location",
+  "admin.geolocationNotSupported":
+    "Geolocation is not supported by your browser",
+  "admin.couldNotDetectCity": "Could not detect your city",
+  "admin.locationPermissionDenied": "Location permission denied",
+  "admin.locationUnavailable": "Location unavailable",
+  "admin.locationTimeout": "Location detection timed out",
+  "admin.locationError": "Error detecting location",
   "admin.selectCondition": "Select condition",
   "admin.conditionNew": "New",
   "admin.conditionLikeNew": "Like New",
@@ -723,7 +747,7 @@ i18n
       },
     },
     fallbackLng: "en",
-    debug: process.env.NODE_ENV === "development",
+    debug: false, // Disabled i18n debugging logs
 
     detection: {
       order: ["localStorage", "navigator", "htmlTag"],

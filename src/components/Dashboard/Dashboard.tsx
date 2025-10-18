@@ -12,7 +12,6 @@ import {
   CheckCircle,
   AlertCircle,
 } from "lucide-react";
-import QRCode from "qrcode";
 import { useAppTranslation } from "../../hooks/useLanguage";
 
 type BidWithProduct = Bid & {
@@ -28,7 +27,6 @@ export const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedBid, setSelectedBid] = useState<BidWithProduct | null>(null);
-  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [userPhoneNumber, setUserPhoneNumber] = useState("");
   const [paymentSubmitted, setPaymentSubmitted] = useState(false);
@@ -110,33 +108,13 @@ export const Dashboard: React.FC = () => {
       setUserPhoneNumber("");
     }
 
-    // Static Swish data - will be updated later with actual merchant details
-    const phoneNumber = "+46701234567"; // Static merchant phone number
-    const amount = bid.amount;
-    const message = `FYNDAK-${bid.id}`; // Simple reference
-    const swishUrl = generateSwishQR(phoneNumber, amount, message);
-
-    try {
-      const qrCodeDataUrl = await QRCode.toDataURL(swishUrl, {
-        width: 300,
-        margin: 2,
-        color: {
-          dark: "#000000",
-          light: "#FFFFFF",
-        },
-      });
-      setQrCodeUrl(qrCodeDataUrl);
-    } catch (error) {
-      console.error("Error generating QR code:", error);
-    }
-
+    // Open payment modal with static QR code
     setShowPaymentModal(true);
   };
 
   const closePaymentModal = () => {
     setShowPaymentModal(false);
     setSelectedBid(null);
-    setQrCodeUrl("");
     setUserPhoneNumber("");
     setPaymentSubmitted(false);
   };
@@ -193,19 +171,6 @@ export const Dashboard: React.FC = () => {
     } finally {
       setPaymentProcessing(false);
     }
-  };
-
-  // Generate Swish QR code data
-  const generateSwishQR = (
-    phoneNumber: string,
-    amount: number,
-    message: string
-  ) => {
-    // Swish QR code format: swish://payment?phone=XXXXXXXXXX&amount=XXX&message=XXX
-    const swishUrl = `swish://payment?phone=${phoneNumber}&amount=${amount}&message=${encodeURIComponent(
-      message
-    )}`;
-    return swishUrl;
   };
 
   if (loading) {
@@ -529,26 +494,16 @@ export const Dashboard: React.FC = () => {
                   </p>
                 </div>
 
-                {qrCodeUrl ? (
-                  <div className="flex justify-center">
-                    <div className="p-4 bg-white rounded-lg shadow-inner">
-                      <img
-                        src={qrCodeUrl}
-                        alt="Swish QR Code"
-                        className="w-64 h-64 mx-auto"
-                      />
-                    </div>
+                {/* Use static QR code image */}
+                <div className="flex justify-center">
+                  <div className="p-4 bg-white rounded-lg shadow-inner">
+                    <img
+                      src="/swish-qr.png"
+                      alt="FYNDAK Swish QR Code"
+                      className="w-80 h-96 mx-auto"
+                    />
                   </div>
-                ) : (
-                  <div className="flex justify-center items-center h-64 bg-gray-100 dark:bg-gray-700 rounded-lg transition-colors duration-200">
-                    <div className="text-center">
-                      <QrCode className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-500 dark:text-gray-400 transition-colors duration-200">
-                        {t("dashboard.generatingQR")}
-                      </p>
-                    </div>
-                  </div>
-                )}
+                </div>
               </div>
 
               {/* Payment Info */}
@@ -562,7 +517,7 @@ export const Dashboard: React.FC = () => {
                       {t("dashboard.recipient")}:
                     </span>
                     <span className="font-medium text-blue-900 dark:text-blue-300 transition-colors duration-200">
-                      FYNDAK Auctions
+                      FYNDAK AB
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -570,17 +525,17 @@ export const Dashboard: React.FC = () => {
                       {t("dashboard.swishNumber")}:
                     </span>
                     <span className="font-medium text-blue-900 dark:text-blue-300 transition-colors duration-200">
-                      +46 764 459 662
+                      123-170 17 39
                     </span>
                   </div>
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <span className="text-blue-700 dark:text-blue-400 transition-colors duration-200">
                       {t("dashboard.reference")}:
                     </span>
                     <span className="font-medium text-blue-900 dark:text-blue-300 transition-colors duration-200">
                       FYNDAK-{selectedBid.id.slice(0, 8)}
                     </span>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between">
                     <span className="text-blue-700 dark:text-blue-400 transition-colors duration-200">
                       {t("dashboard.amount")}:
@@ -600,10 +555,10 @@ export const Dashboard: React.FC = () => {
                 <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600 dark:text-gray-400 transition-colors duration-200">
                   <li>{t("dashboard.openSwishAppStep")}</li>
                   <li>{t("dashboard.scanQRStep")}</li>
-                  <li>
+                  {/* <li>
                     {t("dashboard.useReference")}
                     {selectedBid.id.slice(0, 8)}
-                  </li>
+                  </li> */}
                   <li>{t("dashboard.completePayment")}</li>
                   <li>{t("dashboard.enterPhoneNumber")}</li>
                   <li>{t("dashboard.submitForm")}</li>
@@ -700,7 +655,7 @@ export const Dashboard: React.FC = () => {
                               {t("dashboard.swishNumber")}:
                             </span>
                             <span className="ml-2 font-mono text-gray-900 dark:text-white">
-                              +46 764 459 662
+                              123-170 17 39
                             </span>
                           </div>
                           <div>

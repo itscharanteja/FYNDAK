@@ -74,10 +74,31 @@ export const ProductsPage: React.FC = () => {
 
     const amount = parseFloat(bidAmount);
 
-    if (amount <= selectedProduct.current_price) {
+    // Fetch the latest product data to avoid race conditions
+    const { data: latestProduct, error: fetchError } = await supabase
+      .from("products")
+      .select("current_price, status")
+      .eq("id", selectedProduct.id)
+      .single();
+
+    if (fetchError) {
+      setError(t("products.failedToPlaceBid"));
+      setBidding(false);
+      return;
+    }
+
+    // Check if auction is still active
+    if (latestProduct.status !== "active") {
+      setError(t("products.auctionEnded"));
+      setBidding(false);
+      return;
+    }
+
+    // Check if bid is higher than current price
+    if (amount <= latestProduct.current_price) {
       setError(
         `${t("products.bidHigherThan")} ${formatPrice(
-          selectedProduct.current_price
+          latestProduct.current_price
         )}`
       );
       setBidding(false);
@@ -85,6 +106,7 @@ export const ProductsPage: React.FC = () => {
     }
 
     try {
+      // Insert the new bid
       const { error: bidError } = await supabase.from("bids").insert([
         {
           product_id: selectedProduct.id,
@@ -96,9 +118,19 @@ export const ProductsPage: React.FC = () => {
 
       if (bidError) throw bidError;
 
+      // Update the product's current_price to reflect the new highest bid
+      const { error: updateError } = await supabase
+        .from("products")
+        .update({ current_price: amount })
+        .eq("id", selectedProduct.id);
+
+      if (updateError) throw updateError;
+
       setSuccess(t("products.bidPlacedSuccess"));
       setBidAmount("");
       setSelectedProduct(null);
+      // Refresh the products list to show updated prices
+      fetchProducts();
     } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : t("products.failedToPlaceBid")
