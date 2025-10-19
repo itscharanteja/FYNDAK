@@ -48,7 +48,6 @@ A modern, full-stack auction application built with React TypeScript, Supabase, 
 
 ### Additional Tools
 
-- **QRCode.js** - QR code generation for payments
 - **Canvas API** - Client-side image compression
 - **ESLint** - Code linting and formatting
 - **PostCSS** - CSS processing and optimization
